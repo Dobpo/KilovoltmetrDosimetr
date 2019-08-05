@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Kilovoltmetr-Dosimetr</string>
+    <string name="bluetooth_title">Bluetooth devices</string>
 </resources>

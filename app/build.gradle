@@ -24,7 +24,8 @@ android {
 
 ext{
     appCompatVersion = '1.1.0-rc01'
-    constraintLayoutVersion = '2.0.0-beta2'
+    materialVersion = '1.0.0-alpha1'
+    constrainLayoutVersion = '2.0.0-beta2'
     gsonVersion = '2.8.5'
     lifecycleVersion = "2.2.0-alpha02"
     roomVersion = "2.1.0"
@@ -34,7 +35,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "androidx.appcompat:appcompat-resources:$appCompatVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constrainLayoutVersion"
     implementation "com.google.code.gson:gson:${gsonVersion}"
     implementation "androidx.room:room-runtime:$roomVersion"
     //lifecycle
