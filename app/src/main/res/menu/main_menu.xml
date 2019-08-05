@@ -2,9 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/bluetooth_devices"
-        android:icon="@drawable/ic_bluetooth"
+        android:icon="@drawable/ic_device_24dp"
         android:title="@string/bluetooth_title"
         app:showAsAction="always"
+        />
+    <item android:id="@+id/bluetooth_settings"
+        android:icon="@drawable/ic_settings_bluetooth_24dp"
+        android:title="@string/bluetooth_title"
+        app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/first_item"
