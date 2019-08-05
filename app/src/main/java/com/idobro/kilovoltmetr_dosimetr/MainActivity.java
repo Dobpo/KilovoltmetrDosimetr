@@ -3,11 +3,11 @@ package com.idobro.kilovoltmetr_dosimetr;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.os.Build;
+import android.media.tv.TvContract;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,10 +22,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         listItems = new ArrayList<>();
-        findViewById(android.R.id.content).setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
+    }
+
+    private void refreshDeviceList(){
+        listItems.clear();
+        if(bluetoothAdapter!=null){
+            for(BluetoothDevice device: bluetoothAdapter.getBondedDevices()){
+                if(device.getType() != BluetoothDevice.DEVICE_TYPE_LE){
+                    listItems.add(device);
+                }
+            }
+        }
     }
 
     @Override
@@ -46,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.bluetooth_devices:
                 intent = new Intent(this, SelectDeviceActivity.class);
+                refreshDeviceList();
+                BluetoothDevices devices = new BluetoothDevices(listItems);
+                intent.putExtra("devices", devices);
                 startActivity(intent);
                 return true;
             case R.id.bluetooth_settings:
