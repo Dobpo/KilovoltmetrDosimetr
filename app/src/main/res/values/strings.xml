@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Kilovoltmetr-Dosimetr</string>
+    <string name="app_name_short">KVmetr-Dosimetr</string>
     <string name="bluetooth_title">Bluetooth devices</string>
     <string name="select_bluetooth_device">Select bluetooth device</string>
+    <string name="no_device_found"><![CDATA[<no bluetooth devices found>]]></string>
 </resources>
