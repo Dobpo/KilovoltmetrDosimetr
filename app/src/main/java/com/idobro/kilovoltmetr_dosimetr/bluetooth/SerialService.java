@@ -184,8 +184,8 @@ public class SerialService extends Service implements SerialListener {
         }
     }
 
-    class SerialBinder extends Binder {
-        SerialService getService() {
+    public class SerialBinder extends Binder {
+        public SerialService getService() {
             return SerialService.this;
         }
     }

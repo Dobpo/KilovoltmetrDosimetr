@@ -2,11 +2,8 @@ package com.idobro.kilovoltmetr_dosimetr.ui;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,8 +16,6 @@ import androidx.lifecycle.ViewModelProviders;
 import com.idobro.kilovoltmetr_dosimetr.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialService;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialSocket;
 
 import java.util.ArrayList;
 
@@ -35,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        viewModel.getServerResponceLiveData().observe(this, new OnDataChartReceivedListener());
+        viewModel.getServerResponseLiveData().observe(this, new OnDataChartReceivedListener());
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
     }
 
@@ -88,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK && data != null) {
                 Log.d("LOG", this.getClass().getSimpleName() + " selected device -> " +
                         data.getStringExtra(SelectDeviceActivity.SELECTED_DEVICE));
+                //todo try to connect
+
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -97,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onChanged(String s) {
-
+            Log.d("LOG", this.getClass().getSimpleName() + " data was received");
         }
     }
 
