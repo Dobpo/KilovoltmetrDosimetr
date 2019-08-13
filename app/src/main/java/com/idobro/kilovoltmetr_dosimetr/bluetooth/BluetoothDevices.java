@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr;
+package com.idobro.kilovoltmetr_dosimetr.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Parcel;
@@ -16,7 +16,6 @@ public class BluetoothDevices implements Parcelable {
     public ArrayList<BluetoothDevice> getDevices() {
         return devices;
     }
-
 
     @Override
     public int describeContents() {
