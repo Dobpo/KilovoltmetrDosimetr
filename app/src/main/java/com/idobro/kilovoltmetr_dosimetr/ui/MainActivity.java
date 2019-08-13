@@ -2,31 +2,41 @@ package com.idobro.kilovoltmetr_dosimetr.ui;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.idobro.kilovoltmetr_dosimetr.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialService;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialSocket;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private BluetoothAdapter bluetoothAdapter;
-    private ArrayList<BluetoothDevice> listItems;
+    MainActivityViewModel viewModel;
+    private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        listItems = new ArrayList<>();
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        viewModel.getServerResponceLiveData().observe(this, new OnDataChartReceivedListener());
+        viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
     }
 
     private void refreshDeviceList() {
@@ -81,5 +91,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    class OnDataChartReceivedListener implements Observer<String> {
+
+        @Override
+        public void onChanged(String s) {
+
+        }
+    }
+
+    class OnStatusChangeListener implements Observer<String> {
+
+        @Override
+        public void onChanged(String s) {
+            Log.d("LOG", this.getClass().getSimpleName() + " status was changed");
+        }
     }
 }
