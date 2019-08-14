@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.idobro.kilovoltmetr_dosimetr.MainActivityViewModel;
+import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
 
@@ -83,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK && data != null) {
                 Log.d("LOG", this.getClass().getSimpleName() + " selected device -> " +
                         data.getStringExtra(SelectDeviceActivity.SELECTED_DEVICE));
-                // TODO: 14.08.2019 Connect to device
+                viewModel.connect(bluetoothAdapter.getRemoteDevice(data.getStringExtra
+                        (SelectDeviceActivity.SELECTED_DEVICE)));
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -93,15 +94,16 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onChanged(String s) {
-            Log.d("LOG", this.getClass().getSimpleName() + " data was received");
+            Log.d("LOG", "OnDataChartReceivedList -> onChanged : data was received");
         }
     }
 
-    class OnStatusChangeListener implements Observer<String> {
+    class OnStatusChangeListener implements Observer<MainActivityViewModel.Connected> {
 
         @Override
-        public void onChanged(String s) {
-            Log.d("LOG", this.getClass().getSimpleName() + " status was changed");
+        public void onChanged(MainActivityViewModel.Connected status) {
+            Log.d("LOG", "OnStatusChangeListener -> onChanged : status was changed");
+
         }
     }
 }

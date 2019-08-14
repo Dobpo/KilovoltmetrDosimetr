@@ -41,7 +41,7 @@ public class SerialSocket implements Runnable {
     /**
      * connect-success and most connect-errors are returned asynchronously to listener
      */
-    void connect(Context context, SerialListener listener, BluetoothDevice device) throws IOException {
+    public void connect(Context context, SerialListener listener, BluetoothDevice device) throws IOException {
         if (connected || socket != null)
             throw new IOException("already connected");
         this.context = context;
@@ -52,7 +52,7 @@ public class SerialSocket implements Runnable {
     }
 
 
-    private void disconnect() {
+    public void disconnect() {
         listener = null; // ignore remaining data and errors
         // connected = false; // run loop will reset connected
         if (socket != null) {
@@ -68,7 +68,7 @@ public class SerialSocket implements Runnable {
         }
     }
 
-    void write(byte[] data) throws IOException {
+    public void write(byte[] data) throws IOException {
         if (!connected)
             throw new IOException("not connected");
         socket.getOutputStream().write(data);
