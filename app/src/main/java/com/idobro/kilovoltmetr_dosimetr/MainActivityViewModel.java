@@ -8,27 +8,22 @@ import android.os.IBinder;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.OnLifecycleEvent;
 
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialListener;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialService;
+
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialSocket;
 
-public class MainActivityViewModel extends AndroidViewModel implements LifecycleObserver,
-        ServiceConnection, SerialListener {
-    MutableLiveData<String> serverResponse;
-    MutableLiveData<String> connectStatus;
+public class MainActivityViewModel extends AndroidViewModel implements SerialListener {
+    private MutableLiveData<String> serverResponse;
+    private MutableLiveData<String> connectStatus;
 
     private enum Connected { False, Pending, True }
 
     private String deviceAddress;
 
     private SerialSocket socket;
-    private SerialService service;
     private boolean initialStart = true;
     private Connected connected = Connected.False;
 
@@ -53,36 +48,10 @@ public class MainActivityViewModel extends AndroidViewModel implements Lifecycle
     @Override
     protected void onCleared() {
         super.onCleared();
-        //refresh resource
     }
 
     private Context getContext(){
-        return getApplication();
-    }
-
-    //LifecycleObserver
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    public void activityOnStart(){
-
-    }
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    public void activityOnStop(){}
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    public void activityOnCreate(){}
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    public void activityOnDestroy(){}
-
-
-    //ServiceConnection
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder binder) {
-        service = ((SerialService.SerialBinder) binder).getService();
-
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-
+        return getApplication().getApplicationContext();
     }
 
     //SerialListener

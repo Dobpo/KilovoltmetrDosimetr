@@ -20,7 +20,7 @@ import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    MainActivityViewModel viewModel;
+    private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
 
@@ -83,8 +83,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK && data != null) {
                 Log.d("LOG", this.getClass().getSimpleName() + " selected device -> " +
                         data.getStringExtra(SelectDeviceActivity.SELECTED_DEVICE));
-                //todo try to connect
-
+                // TODO: 14.08.2019 Connect to device
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
