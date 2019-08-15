@@ -2,10 +2,7 @@ package com.idobro.kilovoltmetr_dosimetr.viewmodel;
 
 import android.app.Application;
 import android.bluetooth.BluetoothDevice;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,22 +20,12 @@ import java.io.IOException;
 public class MainActivityViewModel extends AndroidViewModel implements SerialListener {
     private MutableLiveData<String> serverResponse;
     private MutableLiveData<Connected> connectStatus;
-    private boolean initStart = true;
-
-    public enum Connected {False, Pending, True}
-
     private SerialSocket socket;
+
+    public enum Connected {False, Failure, Pending, True}
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
-    }
-
-    public boolean isInitStart() {
-        return initStart;
-    }
-
-    public void setInitStart(boolean initStart) {
-        this.initStart = initStart;
     }
 
     public LiveData<String> getServerResponseLiveData() {
@@ -58,7 +45,6 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
 
     @Override
     protected void onCleared() {
-
         disconnect();
         super.onCleared();
     }
@@ -78,8 +64,7 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
     }
 
     public void disconnect() {
-        if (connectStatus.getValue() != Connected.False) {
-            connectStatus.postValue(Connected.False);
+        if (socket != null) {
             socket.disconnect();
             socket = null;
         }
@@ -108,6 +93,7 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
     @Override
     public void onSerialConnectError(Exception e) {
         disconnect();
+        connectStatus.postValue(Connected.Failure);
         Log.d("LOG", "MainActivityViewModel -> onSerialConnectError : ");
     }
 
@@ -120,6 +106,7 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
     @Override
     public void onSerialIoError(Exception e) {
         disconnect();
+        connectStatus.postValue(Connected.False);
         Log.d("LOG", "MainActivityViewModel -> onSerialIoError : ");
     }
 }

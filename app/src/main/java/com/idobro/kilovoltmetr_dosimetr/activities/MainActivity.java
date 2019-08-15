@@ -1,6 +1,5 @@
 package com.idobro.kilovoltmetr_dosimetr.activities;
 
-import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -12,9 +11,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -62,12 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        viewModel.setInitStart(false);
     }
 
     @Override
@@ -130,22 +125,23 @@ public class MainActivity extends AppCompatActivity {
         public void onChanged(MainActivityViewModel.Connected status) {
             switch (status) {
                 case False:
-//                    if (!viewModel.isInitStart()) {
-//                        charts_container.setVisibility(View.GONE);
-//                    }
                     status_text_view.setText(R.string.disconnected);
                     break;
+                case Failure:
+                    status_text_view.setText(R.string.disconnected);
+                    progressBar.setVisibility(View.GONE);
+                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.secondaryColor));
+                    break;
                 case Pending:
-                    // TODO: 15.08.2019 Show progress bar
                     status_text_view.setText(R.string.connecting);
                     progressBar.setVisibility(View.VISIBLE);
-                    content_layout.setBackgroundColor(getResources().getColor(R.color.secondaryLightColor));
+                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.secondaryLightColor));
                     charts_container.setVisibility(View.GONE);
                     break;
                 case True:
                     charts_container.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
-                    content_layout.setBackgroundColor(getResources().getColor(R.color.secondaryColor));
+                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.secondaryColor));
                     status_text_view.setText(R.string.connected);
                     break;
             }
