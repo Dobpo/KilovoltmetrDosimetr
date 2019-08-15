@@ -1,5 +1,6 @@
-package com.idobro.kilovoltmetr_dosimetr.ui;
+package com.idobro.kilovoltmetr_dosimetr.activities;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -7,6 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -14,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.idobro.kilovoltmetr_dosimetr.ui.CircularProgress;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
@@ -25,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
     private TextView status_text_view;
+    private CircularProgress progressBar;
+    private LinearLayout charts_container;
+    private RelativeLayout content_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +40,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
         status_text_view = findViewById(R.id.status_text_view);
+        progressBar = findViewById(R.id.progress_bar);
+        charts_container = findViewById(R.id.charts_container_linear_layout);
+        content_layout = findViewById(R.id.content_relative_layout);
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         viewModel.getServerResponseLiveData().observe(this, new OnDataChartReceivedListener());
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
     }
@@ -46,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.setInitStart(false);
     }
 
     @Override
@@ -84,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == SelectDeviceActivity.GET_DEVICE_REQUEST) {
             if (resultCode == RESULT_OK && data != null) {
+                viewModel.disconnect();
                 Log.d("LOG", this.getClass().getSimpleName() + " selected device -> " +
                         data.getStringExtra(SelectDeviceActivity.SELECTED_DEVICE));
                 viewModel.connect(bluetoothAdapter.getRemoteDevice(data.getStringExtra
@@ -107,17 +130,25 @@ public class MainActivity extends AppCompatActivity {
         public void onChanged(MainActivityViewModel.Connected status) {
             switch (status) {
                 case False:
+//                    if (!viewModel.isInitStart()) {
+//                        charts_container.setVisibility(View.GONE);
+//                    }
                     status_text_view.setText(R.string.disconnected);
                     break;
                 case Pending:
                     // TODO: 15.08.2019 Show progress bar
                     status_text_view.setText(R.string.connecting);
+                    progressBar.setVisibility(View.VISIBLE);
+                    content_layout.setBackgroundColor(getResources().getColor(R.color.secondaryLightColor));
+                    charts_container.setVisibility(View.GONE);
                     break;
                 case True:
+                    charts_container.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    content_layout.setBackgroundColor(getResources().getColor(R.color.secondaryColor));
                     status_text_view.setText(R.string.connected);
                     break;
             }
-            Log.d("LOG", "OnStatusChangeListener -> onChanged : status was changed");
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.ui;
+package com.idobro.kilovoltmetr_dosimetr.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

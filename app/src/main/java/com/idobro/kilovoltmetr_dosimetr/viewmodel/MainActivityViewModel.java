@@ -23,6 +23,7 @@ import java.io.IOException;
 public class MainActivityViewModel extends AndroidViewModel implements SerialListener {
     private MutableLiveData<String> serverResponse;
     private MutableLiveData<Connected> connectStatus;
+    private boolean initStart = true;
 
     public enum Connected {False, Pending, True}
 
@@ -30,6 +31,14 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
+    }
+
+    public boolean isInitStart() {
+        return initStart;
+    }
+
+    public void setInitStart(boolean initStart) {
+        this.initStart = initStart;
     }
 
     public LiveData<String> getServerResponseLiveData() {
@@ -49,8 +58,8 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
 
     @Override
     protected void onCleared() {
-        if(connectStatus.getValue() != Connected.False)
-            disconnect();
+
+        disconnect();
         super.onCleared();
     }
 
@@ -68,10 +77,12 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
         }
     }
 
-    private void disconnect() {
-        connectStatus.postValue(Connected.False);
-        socket.disconnect();
-        socket = null;
+    public void disconnect() {
+        if (connectStatus.getValue() != Connected.False) {
+            connectStatus.postValue(Connected.False);
+            socket.disconnect();
+            socket = null;
+        }
     }
 
     public void send(String string) {

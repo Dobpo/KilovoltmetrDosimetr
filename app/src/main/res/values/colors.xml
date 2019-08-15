@@ -9,6 +9,9 @@
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
 
+    <!-- CircularProgress Default -->
+    <color name="circular_progress_color">@color/colorPrimary</color>
+
     <color name="blue">#0000ff</color>
     <color name="red">#ff0000</color>
     <color name="green">#00ff00</color>

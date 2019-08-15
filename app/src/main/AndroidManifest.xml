@@ -15,12 +15,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.SelectDeviceActivity"
+            android:name=".activities.SelectDeviceActivity"
             android:excludeFromRecents="true"
             android:theme="@style/Theme.AppCompat.Dialog"
-            android:parentActivityName=".ui.MainActivity"/>
+            android:parentActivityName=".activities.MainActivity"/>
         <activity
-            android:name=".ui.MainActivity">
+            android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
