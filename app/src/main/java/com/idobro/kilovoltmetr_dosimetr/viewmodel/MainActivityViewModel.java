@@ -90,25 +90,25 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
     //SerialListener
     @Override
     public void onSerialConnect() {
+        connectStatus.postValue(Connected.True);
         Log.d("LOG", "MainActivityViewModel -> onSerialConnect : ");
-
     }
 
     @Override
     public void onSerialConnectError(Exception e) {
+        disconnect();
         Log.d("LOG", "MainActivityViewModel -> onSerialConnectError : ");
-
     }
 
     @Override
     public void onSerialRead(byte[] data) {
+        // TODO: 15.08.2019 Create charts from input data and notify activity
         Log.d("LOG", "MainActivityViewModel -> onSerialRead : ");
-
     }
 
     @Override
     public void onSerialIoError(Exception e) {
+        disconnect();
         Log.d("LOG", "MainActivityViewModel -> onSerialIoError : ");
-
     }
 }

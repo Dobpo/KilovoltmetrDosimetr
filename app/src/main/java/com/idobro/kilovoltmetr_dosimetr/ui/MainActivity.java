@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +24,14 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
+    private TextView status_text_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
+        status_text_view = findViewById(R.id.status_text_view);
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         viewModel.getServerResponseLiveData().observe(this, new OnDataChartReceivedListener());
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
@@ -102,8 +105,19 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onChanged(MainActivityViewModel.Connected status) {
+            switch (status) {
+                case False:
+                    status_text_view.setText(R.string.disconnected);
+                    break;
+                case Pending:
+                    // TODO: 15.08.2019 Show progress bar
+                    status_text_view.setText(R.string.connecting);
+                    break;
+                case True:
+                    status_text_view.setText(R.string.connected);
+                    break;
+            }
             Log.d("LOG", "OnStatusChangeListener -> onChanged : status was changed");
-
         }
     }
 }
