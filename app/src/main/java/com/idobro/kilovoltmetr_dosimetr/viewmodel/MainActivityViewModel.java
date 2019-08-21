@@ -1,5 +1,6 @@
 package com.idobro.kilovoltmetr_dosimetr.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -83,11 +84,29 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
         }
     }
 
+    private void processingInputData(byte[] data, int len) {
+        String str;
+        switch (data[0]) {
+            case 0x53:
+                str = String.format("Command: %h, Data = %h%h%h%h /FullDataSize: %s\n"
+                        , data[0], data[1], data[2], data[3], data[4], String.valueOf(len));
+                break;
+            case 0x46:
+                str = String.format("Command: %h, Data = %h%h%h%h /FullDataSize: %s\n"
+                        , data[0], data[1], data[2], data[3], data[4], String.valueOf(len));
+                break;
+            default:
+                str = "";
+                break;
+        }
+
+        serverResponse.postValue(str);
+    }
+
     //SerialListener
     @Override
     public void onSerialConnect() {
         connectStatus.postValue(Connected.True);
-        Log.d("LOG", "MainActivityViewModel -> onSerialConnect : ");
     }
 
     @Override
@@ -98,15 +117,16 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
     }
 
     @Override
-    public void onSerialRead(byte[] data) {
-        // TODO: 15.08.2019 Create charts from input data and notify activity
-        Log.d("LOG", "MainActivityViewModel -> onSerialRead : ");
+    public void onSerialRead(byte[] data, int len)
+    {
+        processingInputData(data, len);
     }
 
     @Override
     public void onSerialIoError(Exception e) {
         disconnect();
         connectStatus.postValue(Connected.False);
+        serverResponse.postValue(e.getMessage() + "\n");
         Log.d("LOG", "MainActivityViewModel -> onSerialIoError : ");
     }
 }

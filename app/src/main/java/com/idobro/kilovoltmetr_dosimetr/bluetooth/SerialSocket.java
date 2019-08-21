@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 public class SerialSocket implements Runnable {
     private static final UUID BLUETOOTH_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    static final String INTENT_ACTION_DISCONNECT = BuildConfig.APPLICATION_ID + ".Disconnect";
+    private static final String INTENT_ACTION_DISCONNECT = BuildConfig.APPLICATION_ID + ".Disconnect";
 
     private final BroadcastReceiver disconnectBroadcastReceiver;
 
@@ -102,17 +102,22 @@ public class SerialSocket implements Runnable {
                 for (int i = 0; i < len; i++) {
                     Log.d("LOG", this.getClass().getSimpleName() + " byte = " + buffer[i]);
                 }
-                byte[] data = Arrays.copyOf(buffer, len);
+                Log.d("LOG", "**************************************");
+
+                //byte[] data = Arrays.copyOf(buffer, len);
                 if (listener != null)
-                    listener.onSerialRead(data);
+                    listener.onSerialRead(buffer, len);
             }
         } catch (Exception e) {
+            Log.d("LOG", "SerialSocket -> run : Error: " + e.getMessage());
+
             connected = false;
             if (listener != null)
                 listener.onSerialIoError(e);
             try {
                 socket.close();
             } catch (Exception ignored) {
+
             }
             socket = null;
         }

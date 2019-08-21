@@ -13,8 +13,8 @@
         />
     <item
         android:id="@+id/first_item"
-        android:title="reserved"/>
+        android:title="@string/first_item_text"/>
     <item
         android:id="@+id/second_item"
-        android:title="reserved" />
+        android:title="@string/reserved" />
 </menu>

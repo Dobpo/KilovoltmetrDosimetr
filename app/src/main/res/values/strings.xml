@@ -7,4 +7,6 @@
     <string name="disconnected">Disconnected</string>
     <string name="connected">Connected</string>
     <string name="connecting">Connecting</string>
+    <string name="first_item_text">Clear text view</string>
+    <string name="reserved">reserved</string>
 </resources>

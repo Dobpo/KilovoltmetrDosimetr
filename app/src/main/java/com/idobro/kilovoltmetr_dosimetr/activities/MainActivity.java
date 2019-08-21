@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
     private TextView status_text_view;
+    private TextView info_text_view;
     private CircularProgress progressBar;
     private LinearLayout charts_container;
     private RelativeLayout content_layout;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
         status_text_view = findViewById(R.id.status_text_view);
+        info_text_view = findViewById(R.id.info_text_view);
         progressBar = findViewById(R.id.progress_bar);
         charts_container = findViewById(R.id.charts_container_linear_layout);
         content_layout = findViewById(R.id.content_relative_layout);
@@ -92,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
                 startActivity(intent);
                 return true;
+            case R.id.first_item:
+                info_text_view.setText("");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -102,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SelectDeviceActivity.GET_DEVICE_REQUEST) {
             if (resultCode == RESULT_OK && data != null) {
                 viewModel.disconnect();
-                Log.d("LOG", this.getClass().getSimpleName() + " selected device -> " +
-                        data.getStringExtra(SelectDeviceActivity.SELECTED_DEVICE));
                 viewModel.connect(bluetoothAdapter.getRemoteDevice(data.getStringExtra
                         (SelectDeviceActivity.SELECTED_DEVICE)));
             }
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onChanged(String s) {
-            Log.d("LOG", "OnDataChartReceivedList -> onChanged : data was received");
+            info_text_view.append(s);
         }
     }
 
