@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,21 +14,20 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.idobro.kilovoltmetr_dosimetr.Constants;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothService;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialListener;
-
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialSocket;
-
-import java.io.IOException;
 
 public class MainActivityViewModel extends AndroidViewModel implements SerialListener {
     private MutableLiveData<String> serverResponse;
     private MutableLiveData<Connected> connectStatus;
-    private SerialSocket socket;
+    private BluetoothService bluetoothService = null;
 
     public enum Connected {False, Failure, Pending, True}
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
+        bluetoothService = new BluetoothService(getContext(), mHandler);
     }
 
     public LiveData<String> getServerResponseLiveData() {
@@ -55,20 +56,12 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
     }
 
     public void connect(BluetoothDevice device) {
-        try {
-            connectStatus.postValue(Connected.Pending);
-            socket = new SerialSocket();
-            socket.connect(getContext(), this, device);
-        } catch (IOException e) {
-            onSerialIoError(e);
-        }
+       bluetoothService.connect(device);
     }
 
     public void disconnect() {
-        if (socket != null) {
-            socket.disconnect();
-            socket = null;
-        }
+        bluetoothService.stop();
+        bluetoothService = null;
     }
 
     public void send(String string) {
@@ -78,7 +71,7 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
         }
         try {
             byte[] data = string.getBytes();
-            socket.write(data);
+            bluetoothService.write(data);
         } catch (Exception e) {
             onSerialConnectError(e);
         }
@@ -102,6 +95,50 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
 
         serverResponse.postValue(str);
     }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothService.STATE_CONNECTED:
+                            connectStatus.postValue(Connected.True);
+                            break;
+                        case BluetoothService.STATE_CONNECTING:
+                            connectStatus.postValue(Connected.Pending);
+                            break;
+                        case BluetoothService.STATE_NONE:
+                            connectStatus.postValue(Connected.False);
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    // TODO: 22.08.2019 Here output data come
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    readMessage += "\n";
+                    serverResponse.postValue(readMessage);
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    //TODO: none
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    // TODO: 22.08.2019 none
+                    break;
+            }
+        }
+    };
 
     //SerialListener
     @Override

@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == SelectDeviceActivity.GET_DEVICE_REQUEST) {
             if (resultCode == RESULT_OK && data != null) {
-                viewModel.disconnect();
                 viewModel.connect(bluetoothAdapter.getRemoteDevice(data.getStringExtra
                         (SelectDeviceActivity.SELECTED_DEVICE)));
             }

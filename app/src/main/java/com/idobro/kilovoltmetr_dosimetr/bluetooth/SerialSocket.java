@@ -11,7 +11,6 @@ import android.util.Log;
 import com.idobro.kilovoltmetr_dosimetr.BuildConfig;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 
