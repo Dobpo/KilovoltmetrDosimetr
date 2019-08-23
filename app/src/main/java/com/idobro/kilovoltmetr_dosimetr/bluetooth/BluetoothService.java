@@ -14,6 +14,8 @@ import com.idobro.kilovoltmetr_dosimetr.Constants;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class BluetoothService {
@@ -292,17 +294,20 @@ public class BluetoothService {
             Log.i("LOG", "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes;
+            int totalCounter = 0;
 
             // Keep listening to the InputStream while connected
             while (mState == STATE_CONNECTED) {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
+                    totalCounter += bytes;
 
-                    Log.d("DATA", "get: -> " + new String(buffer, 0, bytes));
-
+                    Log.d("DATA", "Socket: -> " + new String(buffer, 0, bytes) +
+                            " Len  = " + bytes);
+                    byte[] data = Arrays.copyOf(buffer, bytes);
                     // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
+                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, totalCounter, data)
                             .sendToTarget();
                 } catch (IOException e) {
                     Log.e("LOG", "disconnected", e);

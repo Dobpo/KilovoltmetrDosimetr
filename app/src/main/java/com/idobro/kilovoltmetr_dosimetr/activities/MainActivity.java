@@ -26,7 +26,7 @@ import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnInputDataListener{
     private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         viewModel.getServerResponseLiveData().observe(this, new OnDataChartReceivedListener());
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
+        viewModel.setListener(this);
     }
 
     private void refreshDeviceList() {
@@ -111,6 +112,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onInputData(int counter) {
+        info_text_view.append(String.valueOf(counter) + "\n");
     }
 
     class OnDataChartReceivedListener implements Observer<String> {
