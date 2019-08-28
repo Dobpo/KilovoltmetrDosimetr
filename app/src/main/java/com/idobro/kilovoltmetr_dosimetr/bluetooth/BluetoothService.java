@@ -30,12 +30,17 @@ public class BluetoothService {
     private ConnectedThread mConnectedThread;
     private int mState;
     private int mNewState;
-    private MkState mkState = MkState.WAIT_FOR_X_RAY;
+    private MkState mkState;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 2;  // now connected to a remote device
+
+    static final byte ENABLE_START = 0x01;
+    static final byte ENABLE_END = 0x02;
+    static final byte GET_FRONT = 0x03;
+    static final byte GET_FULL = 0x04;
 
     private enum MkState {
         WAIT_FOR_X_RAY,
@@ -302,89 +307,70 @@ public class BluetoothService {
             Log.i("LOG", "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes;
-            int counter = 0;
-            int totalCounter = 0;
-            ChartDataModel chartDataModel = null;
-            ArrayList<Byte> inputDataArrayList = new ArrayList<>();
+            int count = 0;
+            ArrayList<Byte> endCommandArrayList = new ArrayList<>();
+            ArrayList<Byte> frontDataArrayList = new ArrayList<>();
+            ArrayList<Byte> fullDataArrayList = new ArrayList<>();
+            mkState = MkState.WAIT_FOR_X_RAY;
+            write(new byte[]{ENABLE_START});
 
             // Keep listening to the InputStream while connected
             while (mState == STATE_CONNECTED) {
                 try {
-                    // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    counter += bytes;
-                    totalCounter += bytes;
-
-                    //Log.d("LOG", "ConnectedThread -> run : bytes = " + bytes);
-                    Log.d("LOG", "ConnectedThread -> run : counter = " + counter);
-                    //Log.d("LOG", "ConnectedThread -> run : TotalCounter = " + totalCounter);
-
-                    byte[] data = Arrays.copyOf(buffer, bytes);
-
-                    if (counter < 63004) {
-                        for (byte b : data) {
-                            inputDataArrayList.add(b);
-                        }
-                    } else {
-                        for (byte b : data) {
-                            inputDataArrayList.add(b);
-                        }
-                        chartDataModel = new ChartDataModel(inputDataArrayList);
-                        inputDataArrayList = new ArrayList<>();
-                        counter = 0;
+                    switch (mkState) {
+                        case WAIT_FOR_X_RAY:
+                            bytes = mmInStream.read(buffer, 0, 1);
+                            Log.d("LOG", "ConnectedThread -> run : bytes 1 = " + bytes);
+                            mkState = MkState.WAIT_FOR_END_X_RAY;
+                            break;
+                        case WAIT_FOR_END_X_RAY:
+                            do {
+                                bytes = mmInStream.read(buffer, 0, 5);
+                                count += bytes;
+                                for (int i = 0; i < bytes; i++) {
+                                    endCommandArrayList.add(buffer[i]);
+                                }
+                            } while (count < 5);
+                            ChartDataModel chartDataModel = new ChartDataModel(endCommandArrayList);
+                            Log.d("LOG", "ConnectedThread -> run : count 2 = " + count);
+                            count = 0;
+                            mkState = MkState.WAIT_FOR_FRONT_CHART;
+                            write(new byte[]{GET_FRONT});
+                            break;
+                        case WAIT_FOR_FRONT_CHART:
+                            do {
+                                bytes = mmInStream.read(buffer, 0, 1024);
+                                count += bytes;
+                                for (int i = 0; i < bytes; i++) {
+                                    frontDataArrayList.add(buffer[i]);
+                                }
+                            } while (count < 15000);
+                            Log.d("LOG", "ConnectedThread -> run : count 3 = " + count);
+                            count = 0;
+                            mkState = MkState.WAIT_FOR_FULL_CHART;
+                            write(new byte[]{GET_FULL});
+                            break;
+                        case WAIT_FOR_FULL_CHART:
+                            do {
+                                bytes = mmInStream.read(buffer);
+                                count += bytes;
+                                for (int i = 0; i < bytes; i++) {
+                                    fullDataArrayList.add(buffer[i]);
+                                }
+                            } while (count < 60000);
+                            Log.d("LOG", "ConnectedThread -> run : count 4 = " + count);
+                            count  = 0;
+                            mkState = MkState.WAIT_FOR_X_RAY;
+                            write(new byte[]{ENABLE_START});
+                            break;
                     }
 
-//                    switch (mkState) {
-//                        case WAIT_FOR_X_RAY:
-//                            Log.d("LOG", "ConnectedThread -> run : OnXRay " +
-//                                    ByteToIntConverter.getUnsignedInt(data[0]));
-//                            for (byte b : data) {
-//                                inputDataArrayList.add(b);
-//                            }
-//                            mkState = MkState.WAIT_FOR_END_X_RAY;
-//                            break;
-//                        case WAIT_FOR_END_X_RAY:
-//                            if (counter < 305) {
-//                                for (byte b : data) {
-//                                    inputDataArrayList.add(b);
-//                                }
-//                            }else{
-//                                for (byte b : data) {
-//                                    inputDataArrayList.add(b);
-//                                }
-//                                chartDataModel = new ChartDataModel(inputDataArrayList);
-//                                mkState = MkState.WAIT_FOR_X_RAY;
-//                                counter = 0;
-//                                inputDataArrayList = new ArrayList<>();
-//                                }
-//                            break;
-//                        case WAIT_FOR_FRONT_CHART:
-//                            for (byte b : data) {
-//                                frontArrayList.add(b);
-//                            }
-//
-//                            if (chartDataModel != null && counter >= chartDataModel.getFrontChartLength()) {
-//                                Log.d("LOG", "ConnectedThread -> run : step2");
-//                                counter = 0;
-//                                mkState = MkState.WAIT_FOR_FULL_CHART;
-//                                chartDataModel.setFrontData(frontArrayList);
-//                                frontArrayList = new ArrayList<>();
-//                            }
-//                            break;
-//                        case WAIT_FOR_FULL_CHART:
-//                            for (byte b : data) {
-//                                fullDataArrayList.add(b);
-//                            }
-//                            if (chartDataModel != null && counter >= chartDataModel.getFullChartLength()) {
-//                                Log.d("LOG", "ConnectedThread -> run : step3");
-//                                counter = 0;
-//                                chartDataModel.setFullData(fullDataArrayList);
-//                                fullDataArrayList = new ArrayList<>();
-//                                mkState = MkState.WAIT_FOR_X_RAY;
-//                            }
-//                            break;
-//                       }
-//                    }
+
+                    // Read from the InputStream
+//                    bytes = mmInStream.read(buffer);
+//                    count += bytes;
+//                    byte[] data = Arrays.copyOf(buffer, bytes);
+
 
                     //mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, counter, data)
                     //      .sendToTarget();
@@ -402,8 +388,6 @@ public class BluetoothService {
          * @param buffer The bytes to write
          */
         public void write(byte[] buffer) {
-            Log.d("LOG", "ConnectedThread -> write : go");
-
             try {
                 mmOutStream.write(buffer);
 

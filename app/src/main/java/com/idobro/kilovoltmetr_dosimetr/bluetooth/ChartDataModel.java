@@ -14,8 +14,8 @@ public class ChartDataModel {
 
     public ChartDataModel(ArrayList<Byte> arrayList) {
         inputDataArrayList = arrayList;
-        this.frontChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(0), arrayList.get(1));
-        this.fullChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(2), arrayList.get(3));
+        this.frontChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(1), arrayList.get(2));
+        this.fullChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(3), arrayList.get(4));
         Log.d("LOG", "ChartDataModel -> ChartDataModel : front = " + frontChartLength);
         Log.d("LOG", "ChartDataModel -> ChartDataModel : full = " + fullChartLength);
         Log.d("LOG", "ChartDataModel -> ChartDataModel : totalSize = " + inputDataArrayList.size());
