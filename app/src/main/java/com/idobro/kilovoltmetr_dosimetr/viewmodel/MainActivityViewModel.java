@@ -16,12 +16,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothService;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialListener;
 
-public class MainActivityViewModel extends AndroidViewModel implements SerialListener {
+public class MainActivityViewModel extends AndroidViewModel{
     private MutableLiveData<String> serverResponse;
     private MutableLiveData<Connected> connectStatus;
-    private BluetoothService bluetoothService = null;
+    private BluetoothService bluetoothService;
     public enum Connected {False, Failure, Pending, True}
 
     public MainActivityViewModel(@NonNull Application application) {
@@ -72,7 +71,6 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
             byte[] data = string.getBytes();
             bluetoothService.write(data);
         } catch (Exception e) {
-            onSerialConnectError(e);
         }
     }
 
@@ -141,31 +139,4 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
             }
         }
     };
-
-    //SerialListener
-    @Override
-    public void onSerialConnect() {
-        connectStatus.postValue(Connected.True);
-    }
-
-    @Override
-    public void onSerialConnectError(Exception e) {
-        disconnect();
-        connectStatus.postValue(Connected.Failure);
-        Log.d("LOG", "MainActivityViewModel -> onSerialConnectError : ");
-    }
-
-    @Override
-    public void onSerialRead(byte[] data, int len)
-    {
-        processingInputData(data, len);
-    }
-
-    @Override
-    public void onSerialIoError(Exception e) {
-        disconnect();
-        connectStatus.postValue(Connected.False);
-        serverResponse.postValue(e.getMessage() + "\n");
-        Log.d("LOG", "MainActivityViewModel -> onSerialIoError : ");
-    }
 }

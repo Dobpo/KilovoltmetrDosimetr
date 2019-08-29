@@ -30,6 +30,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .beginTransaction()
                     .add(getIdFragmentContainer(), fragment, MainFragmentImpl.class.getSimpleName())
                     .commit();
+        }else {
+            fragment = existFragments.get(0);
         }
     }
 

@@ -6,24 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.idobro.kilovoltmetr_dosimetr.activities.core.BaseActivity;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
-import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
-import com.idobro.kilovoltmetr_dosimetr.ui.CircularProgress;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
@@ -94,9 +87,10 @@ public class MainActivity extends BaseActivity {
                 getMainFragment().setText("hello");
                 return true;
             case R.id.second_item:
+                getMainFragment().doSomething();
                 return true;
             case R.id.third_item:
-                addFragmentToContainer(new MainFragmentImpl());
+                getMainFragment().doSomethingElse();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
