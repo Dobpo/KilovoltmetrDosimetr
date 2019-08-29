@@ -15,7 +15,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
-import com.idobro.kilovoltmetr_dosimetr.activities.OnInputDataListener;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothService;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.SerialListener;
 
@@ -23,8 +22,6 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
     private MutableLiveData<String> serverResponse;
     private MutableLiveData<Connected> connectStatus;
     private BluetoothService bluetoothService = null;
-    private OnInputDataListener listener;
-
     public enum Connected {False, Failure, Pending, True}
 
     public MainActivityViewModel(@NonNull Application application) {
@@ -45,10 +42,6 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
             connectStatus.setValue(Connected.False);
         }
         return connectStatus;
-    }
-
-    public void setListener(OnInputDataListener listener){
-        this.listener = listener;
     }
 
     @Override
@@ -137,9 +130,6 @@ public class MainActivityViewModel extends AndroidViewModel implements SerialLis
                     Log.d("DATA", "ViewModel: -> " + str);
                     String outStr = new String(readBuf,0,readBuf.length)+"\n";
 
-                    if(listener!= null){
-                        listener.onInputData(totalCounter);
-                    }
                     //serverResponse.postValue(outStr);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:

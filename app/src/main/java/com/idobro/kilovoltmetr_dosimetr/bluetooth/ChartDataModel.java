@@ -35,7 +35,7 @@ public class ChartDataModel {
     public void setFrontDataArray(ArrayList<Byte> frontDataArray) {
         this.frontDataArray = frontDataArray;
         for (byte b : frontDataArray) {
-            // TODO: 29.08.2019  
+            // TODO: 29.08.2019
         }
     }
 
