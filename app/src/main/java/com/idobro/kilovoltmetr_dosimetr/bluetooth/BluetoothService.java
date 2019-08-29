@@ -10,13 +10,11 @@ import android.os.Message;
 import android.util.Log;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
-import com.idobro.kilovoltmetr_dosimetr.utils.ByteToIntConverter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class BluetoothService {
@@ -30,17 +28,16 @@ public class BluetoothService {
     private ConnectedThread mConnectedThread;
     private int mState;
     private int mNewState;
-    private MkState mkState;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 2;  // now connected to a remote device
 
-    static final byte ENABLE_START = 0x01;
-    static final byte ENABLE_END = 0x02;
-    static final byte GET_FRONT = 0x03;
-    static final byte GET_FULL = 0x04;
+    private static final byte ENABLE_START = 0x01;
+    private static final byte ENABLE_END = 0x02;
+    private static final byte GET_FRONT = 0x03;
+    private static final byte GET_FULL = 0x04;
 
     private enum MkState {
         WAIT_FOR_X_RAY,
@@ -71,7 +68,7 @@ public class BluetoothService {
     /**
      * Return the current connection state.
      */
-    synchronized int getState() {
+    private synchronized int getState() {
         return mState;
     }
 
@@ -110,7 +107,7 @@ public class BluetoothService {
      * @param socket The BluetoothSocket on which the connection was made
      * @param device The BluetoothDevice that has been connected
      */
-    public synchronized void connected(BluetoothSocket socket, BluetoothDevice
+    private synchronized void connected(BluetoothSocket socket, BluetoothDevice
             device) {
         Log.d("LOG", "connected, Socket");
 
@@ -220,7 +217,7 @@ public class BluetoothService {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
 
-        public ConnectThread(BluetoothDevice device) {
+        ConnectThread(BluetoothDevice device) {
             mmDevice = device;
             BluetoothSocket tmp = null;
 
@@ -266,7 +263,7 @@ public class BluetoothService {
             connected(mmSocket, mmDevice);
         }
 
-        public void cancel() {
+        void cancel() {
             try {
                 mmSocket.close();
             } catch (IOException e) {
@@ -284,7 +281,7 @@ public class BluetoothService {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
+        ConnectedThread(BluetoothSocket socket) {
             Log.d("LOG", "create ConnectedThread");
             mmSocket = socket;
             InputStream tmpIn = null;
@@ -311,8 +308,8 @@ public class BluetoothService {
             ArrayList<Byte> endCommandArrayList = new ArrayList<>();
             ArrayList<Byte> frontDataArrayList = new ArrayList<>();
             ArrayList<Byte> fullDataArrayList = new ArrayList<>();
-            mkState = MkState.WAIT_FOR_X_RAY;
             write(new byte[]{ENABLE_START});
+            MkState mkState = MkState.WAIT_FOR_X_RAY;
 
             // Keep listening to the InputStream while connected
             while (mState == STATE_CONNECTED) {
@@ -364,14 +361,6 @@ public class BluetoothService {
                             write(new byte[]{ENABLE_START});
                             break;
                     }
-
-
-                    // Read from the InputStream
-//                    bytes = mmInStream.read(buffer);
-//                    count += bytes;
-//                    byte[] data = Arrays.copyOf(buffer, bytes);
-
-
                     //mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, counter, data)
                     //      .sendToTarget();
                 } catch (IOException e) {
@@ -387,7 +376,7 @@ public class BluetoothService {
          *
          * @param buffer The bytes to write
          */
-        public void write(byte[] buffer) {
+        void write(byte[] buffer) {
             try {
                 mmOutStream.write(buffer);
 
@@ -399,7 +388,7 @@ public class BluetoothService {
             }
         }
 
-        public void cancel() {
+        void cancel() {
             try {
                 mmSocket.close();
             } catch (IOException e) {
