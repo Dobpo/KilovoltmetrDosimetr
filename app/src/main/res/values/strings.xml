@@ -6,9 +6,12 @@
     <string name="no_device_found"><![CDATA[<no bluetooth devices found>]]></string>
     <string name="disconnected">Disconnected</string>
     <string name="connected">Connected</string>
-    <string name="connecting">Connecting</string>
     <string name="first_item_text">Clear text view</string>
     <string name="reserved">reserved</string>
     <string name="temp_hint_battery">73%</string>
     <string name="connect_the_sensor">Connect the sensor</string>
+    <string name="connecting">Connecting…</string>
+    <string name="enable_new_measure">Enable new measure</string>
+    <string name="loading_data">Loading data…</string>
+    <string name="waiting_for_xray">Waiting for X Ray</string>
 </resources>

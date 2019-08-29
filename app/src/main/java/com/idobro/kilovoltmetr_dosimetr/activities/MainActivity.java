@@ -84,13 +84,27 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
                 return true;
             case R.id.first_item:
-                getMainFragment().setText("hello");
+                if(isMainFragmentExist())
+                getMainFragment().onDisconnect();
                 return true;
             case R.id.second_item:
-                getMainFragment().doSomething();
+                if(isMainFragmentExist())
+                getMainFragment().onConnecting();
                 return true;
             case R.id.third_item:
-                getMainFragment().doSomethingElse();
+                if(isMainFragmentExist())
+                getMainFragment().waitForNewMeasure();
+                return true;
+            case R.id.fourth_item:
+                if(isMainFragmentExist())
+                getMainFragment().waitForXRay();
+                return true;
+            case R.id.fifth_item:
+                if(isMainFragmentExist())
+                getMainFragment().onXRay();
+                return true;
+            case R.id.sixth_item:
+                addFragmentToContainer(new ChartsFragment());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

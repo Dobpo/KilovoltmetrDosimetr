@@ -21,4 +21,13 @@
     <item
         android:id="@+id/third_item"
         android:title="@string/reserved" />
+    <item
+        android:id="@+id/fourth_item"
+        android:title="@string/reserved" />
+    <item
+        android:id="@+id/fifth_item"
+        android:title="@string/reserved" />
+    <item
+        android:id="@+id/sixth_item"
+        android:title="@string/reserved" />
 </menu>

@@ -31,7 +31,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .add(getIdFragmentContainer(), fragment, MainFragmentImpl.class.getSimpleName())
                     .commit();
         }else {
-            fragment = existFragments.get(0);
+            if(existFragments.get(0) instanceof MainFragment)
+            fragment =  existFragments.get(0);
         }
     }
 
@@ -57,5 +58,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .replace(getIdFragmentContainer(), fragment, fragment.getClass().getSimpleName())
                     .commit();
         }
+    }
+
+    protected boolean isMainFragmentExist(){
+        return fragment != null;
     }
 }
