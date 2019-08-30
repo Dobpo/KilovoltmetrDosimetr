@@ -20,12 +20,12 @@ public class ChartDataModel implements Parcelable {
     //private float[] frontFirstChanel;
     //private float[] frontSecondChanel;
     //private float[] frontThirdChanel;
-    private float[] frontChartData = new float[5000];
+    private float[] frontChartData;
 
     //private float[] fullFirstChanel;
     //private float[] fullSecondChanel;
     //private float[] fullThirdChanel;
-    private float[] fullChartData = new float[20000];
+    private float[] fullChartData;
 
     public ChartDataModel() {
         frontChartData = new float[5000];
@@ -43,12 +43,11 @@ public class ChartDataModel implements Parcelable {
     public ChartDataModel(ArrayList<Byte> arrayList) {
         this.frontChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(1), arrayList.get(2));
         this.fullChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(3), arrayList.get(4));
-        Log.d("LOG", "ChartDataModel -> ChartDataModel : front = " + frontChartLength);
-        Log.d("LOG", "ChartDataModel -> ChartDataModel : full = " + fullChartLength);
     }
 
     public void setFrontDataArray(ArrayList<Byte> frontDataArray) {
-        for (int i = 0; i < (frontDataArray.size() / 3) - 10; i++) {
+        frontChartData = new float[(frontDataArray.size()/3)];
+        for (int i = 0; i < (frontDataArray.size() / 3); i++) {
             frontChartData[i] = (float) (frontDataArray.get(i) * 0xFF
                     + frontDataArray.get(i + 1) * 0xFF
                     + frontDataArray.get(i + 2) * 0xFF);
@@ -56,7 +55,8 @@ public class ChartDataModel implements Parcelable {
     }
 
     public void setFullDataArray(ArrayList<Byte> fullDataArray) {
-        for (int i = 0; i < (fullDataArray.size() / 3) - 10; i++) {
+        fullChartData = new float[(fullDataArray.size()/3)];
+        for (int i = 0; i < (fullDataArray.size() / 3) ; i++) {
             fullChartData[i] = (float) (fullDataArray.get(i) * 0xFF
                     + fullDataArray.get(i + 1) * 0xFF
                     + fullDataArray.get(i + 2) * 0xFF);
@@ -89,9 +89,9 @@ public class ChartDataModel implements Parcelable {
     protected ChartDataModel(Parcel in) {
         this.frontChartLength = in.readInt();
         this.fullChartLength = in.readInt();
-        this.frontDataArray = new ArrayList<Byte>();
+        this.frontDataArray = new ArrayList<>();
         in.readList(this.frontDataArray, Byte.class.getClassLoader());
-        this.fullDataArray = new ArrayList<Byte>();
+        this.fullDataArray = new ArrayList<>();
         in.readList(this.fullDataArray, Byte.class.getClassLoader());
         this.frontChartData = in.createFloatArray();
         this.fullChartData = in.createFloatArray();

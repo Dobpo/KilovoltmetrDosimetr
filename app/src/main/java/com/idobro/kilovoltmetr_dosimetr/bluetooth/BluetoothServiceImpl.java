@@ -294,6 +294,7 @@ public class BluetoothServiceImpl implements BluetoothService {
                                 }
                             } while (count < 15000);
                             chartDataModel.setFrontDataArray(frontDataArrayList);
+                            frontDataArrayList = new ArrayList<>();
                             Log.d("LOG", "ConnectedThread -> run : Front = " + count);
                             count = 0;
                             sensorState = WAIT_FOR_FULL_CHART;
@@ -308,6 +309,7 @@ public class BluetoothServiceImpl implements BluetoothService {
                                 }
                             } while (count < 60000);
                             chartDataModel.setFullDataArray(fullDataArrayList);
+                            fullDataArrayList = new ArrayList<>();
                             Log.d("LOG", "ConnectedThread -> run : Full = " + count);
                             count = 0;
                             sensorState = WAIT_FOR_ENABLE_MEASURE;
