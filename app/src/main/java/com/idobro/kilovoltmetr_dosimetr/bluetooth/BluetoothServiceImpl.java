@@ -55,7 +55,6 @@ public class BluetoothServiceImpl implements BluetoothService {
      * Update UI title according to the current state of the connection
      */
     private synchronized void notifyOnConnectStatusChange() {
-        // Give the new state to the Handler so the UI Activity can update
         mHandler.obtainMessage(Constants.MESSAGE_CONNECT_STATE_CHANGE, mState, -1).sendToTarget();
     }
 
@@ -70,22 +69,18 @@ public class BluetoothServiceImpl implements BluetoothService {
      */
     @Override
     public synchronized void connect(BluetoothDevice device) {
-        // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
                 mConnectThread = null;
             }
         }
-        // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
-        // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
-        // Update UI title
         notifyOnConnectStatusChange();
     }
 
@@ -97,23 +92,19 @@ public class BluetoothServiceImpl implements BluetoothService {
     private synchronized void connected(BluetoothSocket socket) {
         Log.d("LOG", "connected, Socket");
 
-        // Cancel the thread that completed the connection
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
         }
 
-        // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
 
-        // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();
 
-        // Update UI title
         notifyOnConnectStatusChange();
     }
 
@@ -122,8 +113,6 @@ public class BluetoothServiceImpl implements BluetoothService {
      */
     @Override
     public synchronized void stop() {
-        Log.d("LOG", "stop");
-
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
@@ -135,7 +124,6 @@ public class BluetoothServiceImpl implements BluetoothService {
         }
 
         mState = STATE_NONE;
-        // Update UI title
         notifyOnConnectStatusChange();
     }
 
@@ -153,14 +141,12 @@ public class BluetoothServiceImpl implements BluetoothService {
      * @see ConnectedThread#write(byte[])
      */
     private void write(byte[] out) {
-        // Create temporary object
         ConnectedThread r;
-        // Synchronize a copy of the ConnectedThread
+
         synchronized (this) {
             if (mState != STATE_CONNECTED) return;
             r = mConnectedThread;
         }
-        // Perform the write unsynchronized
         r.write(out);
     }
 
@@ -188,10 +174,8 @@ public class BluetoothServiceImpl implements BluetoothService {
      */
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
 
         ConnectThread(BluetoothDevice device) {
-            mmDevice = device;
             BluetoothSocket tmp = null;
 
             try {
@@ -206,17 +190,11 @@ public class BluetoothServiceImpl implements BluetoothService {
 
         public void run() {
             setName("ConnectThread");
-
-            // Always cancel discovery because it will slow down a connection
             mAdapter.cancelDiscovery();
 
-            // Make a connection to the BluetoothSocket
             try {
-                // This is a blocking call and will only return on a
-                // successful connection or an exception
                 mmSocket.connect();
             } catch (IOException e) {
-                // Close the socket
                 try {
                     mmSocket.close();
                 } catch (IOException e2) {
@@ -226,12 +204,9 @@ public class BluetoothServiceImpl implements BluetoothService {
                 return;
             }
 
-            // Reset the ConnectThread because we're done
             synchronized (BluetoothServiceImpl.this) {
                 mConnectThread = null;
             }
-
-            // Start the connected thread
             connected(mmSocket);
         }
 
@@ -254,7 +229,6 @@ public class BluetoothServiceImpl implements BluetoothService {
         private final OutputStream mmOutStream;
 
         ConnectedThread(BluetoothSocket socket) {
-            Log.d("LOG", "create ConnectedThread");
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -273,13 +247,13 @@ public class BluetoothServiceImpl implements BluetoothService {
         }
 
         public void run() {
-            Log.i("LOG", "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes;
             int count = 0;
             ArrayList<Byte> endCommandArrayList = new ArrayList<>();
             ArrayList<Byte> frontDataArrayList = new ArrayList<>();
             ArrayList<Byte> fullDataArrayList = new ArrayList<>();
+            ChartDataModel chartDataModel = new ChartDataModel();
 
             // Keep listening to the InputStream while connected
             while (mState == STATE_CONNECTED) {
@@ -287,15 +261,12 @@ public class BluetoothServiceImpl implements BluetoothService {
                     switch (sensorState) {
                         case WAIT_FOR_ENABLE_MEASURE:
                             // TODO: 30.08.2019  get answer from sensor
-                            //sensorState = WAIT_FOR_END_X_RAY;
-                            //notifyOnSensorStatusChange();
                             break;
                         case WAIT_FOR_X_RAY:
                             do {
                                 bytes = mmInStream.read(buffer, 0, 1);
                                 count += bytes;
-                            }while (count<1);
-                            Log.d("LOG", "ConnectedThread -> run : bytes 1 = " + bytes);
+                            } while (count < 1);
                             count = 0;
                             sensorState = WAIT_FOR_END_X_RAY;
                             notifyOnSensorStatusChange();
@@ -308,8 +279,8 @@ public class BluetoothServiceImpl implements BluetoothService {
                                     endCommandArrayList.add(buffer[i]);
                                 }
                             } while (count < 5);
-                            ChartDataModel chartDataModel = new ChartDataModel(endCommandArrayList);
-                            Log.d("LOG", "ConnectedThread -> run : count 2 = " + count);
+                            chartDataModel = new ChartDataModel(endCommandArrayList);
+                            Log.d("LOG", "ConnectedThread -> run : Meassure done = " + count);
                             count = 0;
                             sensorState = WAIT_FOR_FRONT_CHART;
                             write(GET_FRONT);
@@ -322,7 +293,8 @@ public class BluetoothServiceImpl implements BluetoothService {
                                     frontDataArrayList.add(buffer[i]);
                                 }
                             } while (count < 15000);
-                            Log.d("LOG", "ConnectedThread -> run : count 3 = " + count);
+                            chartDataModel.setFrontDataArray(frontDataArrayList);
+                            Log.d("LOG", "ConnectedThread -> run : Front = " + count);
                             count = 0;
                             sensorState = WAIT_FOR_FULL_CHART;
                             write(GET_FULL);
@@ -335,10 +307,12 @@ public class BluetoothServiceImpl implements BluetoothService {
                                     fullDataArrayList.add(buffer[i]);
                                 }
                             } while (count < 60000);
-                            Log.d("LOG", "ConnectedThread -> run : count 4 = " + count);
+                            chartDataModel.setFullDataArray(fullDataArrayList);
+                            Log.d("LOG", "ConnectedThread -> run : Full = " + count);
                             count = 0;
                             sensorState = WAIT_FOR_ENABLE_MEASURE;
-                            mHandler.obtainMessage(Constants.MESSAGE_MEASURE_DONE).sendToTarget();
+                            mHandler.obtainMessage(Constants.MESSAGE_MEASURE_DONE, -1, -1, chartDataModel)
+                                    .sendToTarget();
                             break;
                     }
                 } catch (IOException e) {

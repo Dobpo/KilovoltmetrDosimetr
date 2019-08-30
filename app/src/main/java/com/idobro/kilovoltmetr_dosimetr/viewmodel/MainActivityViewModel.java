@@ -16,6 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.idobro.kilovoltmetr_dosimetr.Constants;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.core.BluetoothService;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothServiceImpl;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 
 public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<String> serverResponse;
@@ -111,6 +112,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
                     break;
                 case Constants.MESSAGE_MEASURE_DONE:
+                    ChartDataModel data = (ChartDataModel)msg.obj;
                     serverResponse.postValue("complete");
                     Toast.makeText(getContext(), "Measure done", Toast.LENGTH_SHORT).show();
                     break;

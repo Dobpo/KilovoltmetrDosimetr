@@ -90,6 +90,9 @@ public class MainActivity extends BaseActivity {
             case R.id.new_measure_item:
                 viewModel.enableNewMeasure();
                 return true;
+            case R.id.show_chart:
+                addFragmentToContainer(new ChartsFragment());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -158,7 +161,6 @@ public class MainActivity extends BaseActivity {
                     } else {
                         getMainFragment().waitForXRay();
                     }
-
                     break;
                 case LOAD_CHART_DATA:
                     if (isMainFragmentExist())

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/bluetooth_devices"
         android:icon="@drawable/ic_device_24dp"
@@ -15,6 +16,7 @@
         android:id="@+id/new_measure_item"
         android:title="@string/new_measure"/>
     <item
-        android:id="@+id/second_item"
-        android:title="@string/reserved" />
+        android:id="@+id/show_chart"
+        android:title="Show chart fragment"
+        tools:ignore="HardcodedText" />
 </menu>

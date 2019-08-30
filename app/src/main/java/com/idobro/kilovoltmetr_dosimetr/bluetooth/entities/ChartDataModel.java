@@ -7,8 +7,8 @@ import com.idobro.kilovoltmetr_dosimetr.utils.ByteToIntConverter;
 import java.util.ArrayList;
 
 public class ChartDataModel {
-    private final int frontChartLength;
-    private final int fullChartLength;
+    private int frontChartLength;
+    private int fullChartLength;
     private ArrayList<Byte> inputDataArrayList;
     private ArrayList<Byte> frontDataArray;
     private ArrayList<Byte> fullDataArray;
@@ -23,6 +23,9 @@ public class ChartDataModel {
     private float[] fullThirdChanel;
     private float[] fullTotal;
 
+    public ChartDataModel() {
+    }
+
     public ChartDataModel(ArrayList<Byte> arrayList) {
         inputDataArrayList = arrayList;
         this.frontChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(1), arrayList.get(2));
@@ -34,9 +37,6 @@ public class ChartDataModel {
 
     public void setFrontDataArray(ArrayList<Byte> frontDataArray) {
         this.frontDataArray = frontDataArray;
-        for (byte b : frontDataArray) {
-            // TODO: 29.08.2019
-        }
     }
 
     public void setFullDataArray(ArrayList<Byte> fullDataArray) {
