@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
 
 import java.util.ArrayList;
 

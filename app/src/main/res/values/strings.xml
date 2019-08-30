@@ -14,4 +14,5 @@
     <string name="enable_new_measure">Enable new measure</string>
     <string name="loading_data">Loading data…</string>
     <string name="waiting_for_xray">Waiting for X Ray</string>
+    <string name="new_measure">New measure</string>
 </resources>

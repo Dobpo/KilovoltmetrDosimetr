@@ -9,17 +9,21 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.idobro.kilovoltmetr_dosimetr.activities.core.BaseActivity;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
+import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
+import com.idobro.kilovoltmetr_dosimetr.fragments.core.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothDevices;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
 
 import java.util.ArrayList;
 
@@ -83,28 +87,8 @@ public class MainActivity extends BaseActivity {
                 intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
                 startActivity(intent);
                 return true;
-            case R.id.first_item:
-                if(isMainFragmentExist())
-                getMainFragment().onDisconnect();
-                return true;
-            case R.id.second_item:
-                if(isMainFragmentExist())
-                getMainFragment().onConnecting();
-                return true;
-            case R.id.third_item:
-                if(isMainFragmentExist())
-                getMainFragment().waitForNewMeasure();
-                return true;
-            case R.id.fourth_item:
-                if(isMainFragmentExist())
-                getMainFragment().waitForXRay();
-                return true;
-            case R.id.fifth_item:
-                if(isMainFragmentExist())
-                getMainFragment().onXRay();
-                return true;
-            case R.id.sixth_item:
-                addFragmentToContainer(new ChartsFragment());
+            case R.id.new_measure_item:
+                viewModel.enableNewMeasure();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -131,34 +115,54 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    class OnStatusChangeListener implements Observer<MainActivityViewModel.Connected> {
+    class OnStatusChangeListener implements Observer<MainActivityViewModel.SocketStatus> {
 
         @Override
-        public void onChanged(MainActivityViewModel.Connected status) {
+        public void onChanged(MainActivityViewModel.SocketStatus status) {
             switch (status) {
-                case False:
+                case DISCONNECT:
                     status_text_view.setText(R.string.disconnected);
                     bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
+                    Toast.makeText(MainActivity.this, "Connect with sensor was lost",
+                            Toast.LENGTH_SHORT).show();
                     break;
-                case Failure:
-                    status_text_view.setText(R.string.disconnected);
-                    bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
-                    //progressBar.setVisibility(View.GONE);
-                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.secondaryColor));
-                    break;
-                case Pending:
+                case PENDING:
                     status_text_view.setText(R.string.connecting);
                     bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_searching_24dp);
-                    //progressBar.setVisibility(View.VISIBLE);
-                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.secondaryLightColor));
-                    //charts_container.setVisibility(View.GONE);
+                    if (isMainFragmentExist())
+                        getMainFragment().onConnecting();
                     break;
-                case True:
-                    //charts_container.setVisibility(View.VISIBLE);
-                    //progressBar.setVisibility(View.GONE);
+                case COULD_NOT_CONNECT:
+                    status_text_view.setText(R.string.disconnected);
+                    bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
+                    Toast.makeText(MainActivity.this, "Couldn't connect to sensor",
+                            Toast.LENGTH_SHORT).show();
+                    if (isMainFragmentExist())
+                        getMainFragment().onDisconnect();
+                    break;
+                case CONNECTED:
                     bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_connected_24dp);
-                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.secondaryColor));
+                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(),
+                            R.color.secondaryColor));
                     status_text_view.setText(R.string.connected);
+                    if (isMainFragmentExist())
+                        getMainFragment().waitForNewMeasure();
+                    break;
+                case WAIT_X_RAY:
+                    if (!isMainFragmentExist()) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(MainFragment.MESSAGE, getString(R.string.waiting_for_xray));
+                        Fragment mainFragment = new MainFragmentImpl();
+                        mainFragment.setArguments(bundle);
+                        addFragmentToContainer(mainFragment);
+                    } else {
+                        getMainFragment().waitForXRay();
+                    }
+
+                    break;
+                case LOAD_CHART_DATA:
+                    if (isMainFragmentExist())
+                        getMainFragment().onXRay();
                     break;
             }
         }

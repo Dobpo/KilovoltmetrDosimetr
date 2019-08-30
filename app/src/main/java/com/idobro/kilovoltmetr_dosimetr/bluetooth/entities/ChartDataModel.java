@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.bluetooth;
+package com.idobro.kilovoltmetr_dosimetr.bluetooth.entities;
 
 import android.util.Log;
 
@@ -23,7 +23,7 @@ public class ChartDataModel {
     private float[] fullThirdChanel;
     private float[] fullTotal;
 
-    ChartDataModel(ArrayList<Byte> arrayList) {
+    public ChartDataModel(ArrayList<Byte> arrayList) {
         inputDataArrayList = arrayList;
         this.frontChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(1), arrayList.get(2));
         this.fullChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(3), arrayList.get(4));

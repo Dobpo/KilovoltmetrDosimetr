@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,17 +14,27 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothService;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.core.BluetoothService;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothServiceImpl;
 
-public class MainActivityViewModel extends AndroidViewModel{
+public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<String> serverResponse;
-    private MutableLiveData<Connected> connectStatus;
+    private MutableLiveData<SocketStatus> connectStatus;
     private BluetoothService bluetoothService;
-    public enum Connected {False, Failure, Pending, True}
+
+    public enum SocketStatus {
+        DISCONNECT,
+        COULD_NOT_CONNECT,
+        PENDING,
+        CONNECTED,
+        WAIT_X_RAY,
+        LOAD_CHART_DATA
+    }
+
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
-        bluetoothService = new BluetoothService(getContext(), mHandler);
+        bluetoothService = new BluetoothServiceImpl(getContext(), mHandler);
     }
 
     public LiveData<String> getServerResponseLiveData() {
@@ -35,10 +44,10 @@ public class MainActivityViewModel extends AndroidViewModel{
         return serverResponse;
     }
 
-    public LiveData<Connected> getStatusLiveData() {
+    public LiveData<SocketStatus> getStatusLiveData() {
         if (connectStatus == null) {
             connectStatus = new MutableLiveData<>();
-            connectStatus.setValue(Connected.False);
+            connectStatus.setValue(SocketStatus.DISCONNECT);
         }
         return connectStatus;
     }
@@ -54,43 +63,16 @@ public class MainActivityViewModel extends AndroidViewModel{
     }
 
     public void connect(BluetoothDevice device) {
-       bluetoothService.connect(device);
+        bluetoothService.connect(device);
     }
 
-    public void disconnect() {
+    private void disconnect() {
         bluetoothService.stop();
         bluetoothService = null;
     }
 
-    public void send(String string) {
-        if (connectStatus.getValue() != Connected.True) {
-            Toast.makeText(getContext(), "not connect", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try {
-            byte[] data = string.getBytes();
-            bluetoothService.write(data);
-        } catch (Exception e) {
-        }
-    }
-
-    private void processingInputData(byte[] data, int len) {
-        String str;
-        switch (data[0]) {
-            case 0x53:
-                str = String.format("Command: %h, Data = %h%h%h%h /FullDataSize: %s\n"
-                        , data[0], data[1], data[2], data[3], data[4], String.valueOf(len));
-                break;
-            case 0x46:
-                str = String.format("Command: %h, Data = %h%h%h%h /FullDataSize: %s\n"
-                        , data[0], data[1], data[2], data[3], data[4], String.valueOf(len));
-                break;
-            default:
-                str = "";
-                break;
-        }
-
-        serverResponse.postValue(str);
+    public void enableNewMeasure() {
+        bluetoothService.enableNewMeasure();
     }
 
     /**
@@ -101,40 +83,36 @@ public class MainActivityViewModel extends AndroidViewModel{
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
+                case Constants.MESSAGE_CONNECT_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothService.STATE_CONNECTED:
-                            connectStatus.postValue(Connected.True);
+                        case BluetoothServiceImpl.STATE_CONNECTED:
+                            connectStatus.postValue(SocketStatus.CONNECTED);
                             break;
-                        case BluetoothService.STATE_CONNECTING:
-                            connectStatus.postValue(Connected.Pending);
+                        case BluetoothServiceImpl.STATE_CONNECTING:
+                            connectStatus.postValue(SocketStatus.PENDING);
                             break;
-                        case BluetoothService.STATE_NONE:
-                            connectStatus.postValue(Connected.False);
+                        case BluetoothServiceImpl.STATE_NONE:
+                            connectStatus.postValue(SocketStatus.DISCONNECT);
                             break;
                     }
                     break;
-                case Constants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    // TODO: 22.08.2019 Here output data come
+                case Constants.MESSAGE_COULD_NOT_CONNECT:
+                    connectStatus.postValue(SocketStatus.COULD_NOT_CONNECT);
+                    Toast.makeText(getContext(), "Could not connect the sensor", Toast.LENGTH_SHORT).show();
                     break;
-                case Constants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    int len = msg.arg1;
-                    int totalCounter = msg.arg2;
-                    String str = new String(readBuf, 0, readBuf.length) + " Len  = " + len;
-                    Log.d("DATA", "ViewModel: -> " + str);
-                    String outStr = new String(readBuf,0,readBuf.length)+"\n";
-
-                    //serverResponse.postValue(outStr);
+                case Constants.MESSAGE_SENSOR_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothServiceImpl.WAIT_FOR_X_RAY:
+                            connectStatus.postValue(SocketStatus.WAIT_X_RAY);
+                            break;
+                        case BluetoothServiceImpl.WAIT_FOR_END_X_RAY:
+                            connectStatus.postValue(SocketStatus.LOAD_CHART_DATA);
+                            break;
+                    }
                     break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    //TODO: none
-                    break;
-                case Constants.MESSAGE_TOAST:
-                    // TODO: 22.08.2019 none
+                case Constants.MESSAGE_MEASURE_DONE:
+                    serverResponse.postValue("complete");
+                    Toast.makeText(getContext(), "Measure done", Toast.LENGTH_SHORT).show();
                     break;
             }
         }

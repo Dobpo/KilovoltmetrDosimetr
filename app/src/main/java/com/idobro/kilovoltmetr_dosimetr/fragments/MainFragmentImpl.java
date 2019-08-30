@@ -23,6 +23,8 @@ public class MainFragmentImpl extends BaseFragment implements MainFragment {
     @Override
     protected void initUI(View rootView) {
         text_view = rootView.findViewById(R.id.text_view);
+        if (getArguments() != null)
+        text_view.setText(getArguments().getString(MainFragment.MESSAGE));
         progress_bar = rootView.findViewById(R.id.progress_bar);
     }
 
@@ -59,7 +61,7 @@ public class MainFragmentImpl extends BaseFragment implements MainFragment {
                 progressStatus +=1;
 
                 try{
-                    Thread.sleep(10);
+                    Thread.sleep(15);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }

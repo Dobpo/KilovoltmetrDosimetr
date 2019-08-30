@@ -24,15 +24,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void setStartFragment() {
         List<Fragment> existFragments = getSupportFragmentManager()
                 .getFragments();
-        if ((existFragments.isEmpty()) ){
-            fragment = new MainFragmentImpl();
+        if ((existFragments.isEmpty())) {
+            this.fragment = new MainFragmentImpl();
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(getIdFragmentContainer(), fragment, MainFragmentImpl.class.getSimpleName())
                     .commit();
-        }else {
-            if(existFragments.get(0) instanceof MainFragment)
-            fragment =  existFragments.get(0);
+        } else {
+            if (existFragments.get(0) instanceof MainFragment)
+                fragment = existFragments.get(0);
         }
     }
 
@@ -60,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean isMainFragmentExist(){
+    protected boolean isMainFragmentExist() {
         return fragment != null;
     }
 }

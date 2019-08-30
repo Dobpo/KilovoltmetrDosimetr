@@ -4,12 +4,12 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.core.BluetoothService;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class BluetoothService {
+public class BluetoothServiceImpl implements BluetoothService {
     // Unique UUID for this application
     private static final UUID BLUETOOTH_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -27,49 +27,40 @@ public class BluetoothService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
-    private int mNewState;
+    private int sensorState = WAIT_FOR_ENABLE_MEASURE;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 2;  // now connected to a remote device
 
-    private static final byte ENABLE_START = 0x01;
-    private static final byte ENABLE_END = 0x02;
-    private static final byte GET_FRONT = 0x03;
-    private static final byte GET_FULL = 0x04;
+    //Commands to sensor
+    private static final byte[] ENABLE_START = {0x01};
+    private static final byte[] GET_FRONT = {0x03};
+    private static final byte[] GET_FULL = {0x04};
 
-    private enum MkState {
-        WAIT_FOR_X_RAY,
-        WAIT_FOR_END_X_RAY,
-        WAIT_FOR_FRONT_CHART,
-        WAIT_FOR_FULL_CHART
-    }
+    //Constants that indicate sensor state
+    private static final int WAIT_FOR_ENABLE_MEASURE = 0;
+    public static final int WAIT_FOR_X_RAY = 1;
+    public static final int WAIT_FOR_END_X_RAY = 2;
+    private static final int WAIT_FOR_FRONT_CHART = 3;
+    private static final int WAIT_FOR_FULL_CHART = 4;
 
-
-    public BluetoothService(Context context, Handler mHandler) {
+    public BluetoothServiceImpl(Context context, Handler mHandler) {
         this.mAdapter = BluetoothAdapter.getDefaultAdapter();
         this.mHandler = mHandler;
     }
 
     /**
-     * Update UI title according to the current state of the chat connection
+     * Update UI title according to the current state of the connection
      */
-    private synchronized void updateUserInterfaceTitle() {
-        mState = getState();
-        Log.d("LOG", "updateUserInterfaceTitle() " + mNewState + " -> " + mState);
-        mNewState = mState;
-
+    private synchronized void notifyOnConnectStatusChange() {
         // Give the new state to the Handler so the UI Activity can update
-        mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, mNewState, -1).sendToTarget();
+        mHandler.obtainMessage(Constants.MESSAGE_CONNECT_STATE_CHANGE, mState, -1).sendToTarget();
     }
 
-
-    /**
-     * Return the current connection state.
-     */
-    private synchronized int getState() {
-        return mState;
+    private synchronized void notifyOnSensorStatusChange() {
+        mHandler.obtainMessage(Constants.MESSAGE_SENSOR_STATE_CHANGE, sensorState, -1).sendToTarget();
     }
 
     /**
@@ -77,9 +68,8 @@ public class BluetoothService {
      *
      * @param device The BluetoothDevice to connect
      */
+    @Override
     public synchronized void connect(BluetoothDevice device) {
-        Log.d("LOG", "connect to: " + device);
-
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
@@ -87,28 +77,24 @@ public class BluetoothService {
                 mConnectThread = null;
             }
         }
-
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
-
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
         // Update UI title
-        updateUserInterfaceTitle();
+        notifyOnConnectStatusChange();
     }
 
     /**
      * Start the ConnectedThread to begin managing a Bluetooth connection
      *
      * @param socket The BluetoothSocket on which the connection was made
-     * @param device The BluetoothDevice that has been connected
      */
-    private synchronized void connected(BluetoothSocket socket, BluetoothDevice
-            device) {
+    private synchronized void connected(BluetoothSocket socket) {
         Log.d("LOG", "connected, Socket");
 
         // Cancel the thread that completed the connection
@@ -127,19 +113,14 @@ public class BluetoothService {
         mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();
 
-        // Send the name of the connected device back to the UI Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.DEVICE_NAME, device.getName());
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
         // Update UI title
-        updateUserInterfaceTitle();
+        notifyOnConnectStatusChange();
     }
 
     /**
      * Stop all threads
      */
+    @Override
     public synchronized void stop() {
         Log.d("LOG", "stop");
 
@@ -155,7 +136,14 @@ public class BluetoothService {
 
         mState = STATE_NONE;
         // Update UI title
-        updateUserInterfaceTitle();
+        notifyOnConnectStatusChange();
+    }
+
+    @Override
+    public void enableNewMeasure() {
+        write(ENABLE_START);
+        sensorState = WAIT_FOR_X_RAY;
+        notifyOnSensorStatusChange();
     }
 
     /**
@@ -164,7 +152,7 @@ public class BluetoothService {
      * @param out The bytes to write
      * @see ConnectedThread#write(byte[])
      */
-    public void write(byte[] out) {
+    private void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
@@ -176,36 +164,21 @@ public class BluetoothService {
         r.write(out);
     }
 
+
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
     private void connectionFailed() {
-        // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Unable to connect device");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
-
+        mHandler.obtainMessage(Constants.MESSAGE_COULD_NOT_CONNECT, -1, -1).sendToTarget();
         mState = STATE_NONE;
-        // Update UI title
-        updateUserInterfaceTitle();
     }
 
     /**
      * Indicate that the connection was lost and notify the UI Activity.
      */
     private void connectionLost() {
-        // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Device connection was lost");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
-
         mState = STATE_NONE;
-        // Update UI title
-        updateUserInterfaceTitle();
+        notifyOnConnectStatusChange();
     }
 
     /**
@@ -232,7 +205,6 @@ public class BluetoothService {
         }
 
         public void run() {
-            Log.i("LOG", "BEGIN mConnectThread");
             setName("ConnectThread");
 
             // Always cancel discovery because it will slow down a connection
@@ -255,12 +227,12 @@ public class BluetoothService {
             }
 
             // Reset the ConnectThread because we're done
-            synchronized (BluetoothService.this) {
+            synchronized (BluetoothServiceImpl.this) {
                 mConnectThread = null;
             }
 
             // Start the connected thread
-            connected(mmSocket, mmDevice);
+            connected(mmSocket);
         }
 
         void cancel() {
@@ -308,17 +280,25 @@ public class BluetoothService {
             ArrayList<Byte> endCommandArrayList = new ArrayList<>();
             ArrayList<Byte> frontDataArrayList = new ArrayList<>();
             ArrayList<Byte> fullDataArrayList = new ArrayList<>();
-            write(new byte[]{ENABLE_START});
-            MkState mkState = MkState.WAIT_FOR_X_RAY;
 
             // Keep listening to the InputStream while connected
             while (mState == STATE_CONNECTED) {
                 try {
-                    switch (mkState) {
+                    switch (sensorState) {
+                        case WAIT_FOR_ENABLE_MEASURE:
+                            // TODO: 30.08.2019  get answer from sensor
+                            //sensorState = WAIT_FOR_END_X_RAY;
+                            //notifyOnSensorStatusChange();
+                            break;
                         case WAIT_FOR_X_RAY:
-                            bytes = mmInStream.read(buffer, 0, 1);
+                            do {
+                                bytes = mmInStream.read(buffer, 0, 1);
+                                count += bytes;
+                            }while (count<1);
                             Log.d("LOG", "ConnectedThread -> run : bytes 1 = " + bytes);
-                            mkState = MkState.WAIT_FOR_END_X_RAY;
+                            count = 0;
+                            sensorState = WAIT_FOR_END_X_RAY;
+                            notifyOnSensorStatusChange();
                             break;
                         case WAIT_FOR_END_X_RAY:
                             do {
@@ -331,8 +311,8 @@ public class BluetoothService {
                             ChartDataModel chartDataModel = new ChartDataModel(endCommandArrayList);
                             Log.d("LOG", "ConnectedThread -> run : count 2 = " + count);
                             count = 0;
-                            mkState = MkState.WAIT_FOR_FRONT_CHART;
-                            write(new byte[]{GET_FRONT});
+                            sensorState = WAIT_FOR_FRONT_CHART;
+                            write(GET_FRONT);
                             break;
                         case WAIT_FOR_FRONT_CHART:
                             do {
@@ -344,8 +324,8 @@ public class BluetoothService {
                             } while (count < 15000);
                             Log.d("LOG", "ConnectedThread -> run : count 3 = " + count);
                             count = 0;
-                            mkState = MkState.WAIT_FOR_FULL_CHART;
-                            write(new byte[]{GET_FULL});
+                            sensorState = WAIT_FOR_FULL_CHART;
+                            write(GET_FULL);
                             break;
                         case WAIT_FOR_FULL_CHART:
                             do {
@@ -356,13 +336,11 @@ public class BluetoothService {
                                 }
                             } while (count < 60000);
                             Log.d("LOG", "ConnectedThread -> run : count 4 = " + count);
-                            count  = 0;
-                            mkState = MkState.WAIT_FOR_X_RAY;
-                            write(new byte[]{ENABLE_START});
+                            count = 0;
+                            sensorState = WAIT_FOR_ENABLE_MEASURE;
+                            mHandler.obtainMessage(Constants.MESSAGE_MEASURE_DONE).sendToTarget();
                             break;
                     }
-                    //mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, counter, data)
-                    //      .sendToTarget();
                 } catch (IOException e) {
                     Log.e("LOG", "disconnected", e);
                     connectionLost();
@@ -379,10 +357,6 @@ public class BluetoothService {
         void write(byte[] buffer) {
             try {
                 mmOutStream.write(buffer);
-
-                // Share the sent message back to the UI Activity
-                mHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)
-                        .sendToTarget();
             } catch (IOException e) {
                 Log.e("LOG", "Exception during write", e);
             }
