@@ -12,6 +12,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.idobro.kilovoltmetr_dosimetr.R;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.fragments.core.BaseFragment;
 
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class ChartsFragment extends BaseFragment {
     private LineChart front_chart;
     private LineChart full_chart;
 
-    private float[] frontArray = {0,1,2,3,4,5,6,7,8,9};
-    private float[] fullArray = {10,10,10,10,10,10,10,10,10,10,10,10,10,10};
+    private float[] frontArray;
+    private float[] fullArray;
 
     @Override
     protected int getResourceID() {
@@ -31,6 +32,11 @@ public class ChartsFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null){
+            ChartDataModel charts = getArguments().getParcelable(ChartDataModel.CHARTS);
+            frontArray = charts.getFrontChartData();
+            fullArray = charts.getFullChartData();
+        }
     }
 
     @Override

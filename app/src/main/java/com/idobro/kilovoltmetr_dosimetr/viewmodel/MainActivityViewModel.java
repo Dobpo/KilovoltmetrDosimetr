@@ -19,7 +19,7 @@ import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothServiceImpl;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 
 public class MainActivityViewModel extends AndroidViewModel {
-    private MutableLiveData<String> serverResponse;
+    private MutableLiveData<ChartDataModel> charts;
     private MutableLiveData<SocketStatus> connectStatus;
     private BluetoothService bluetoothService;
 
@@ -38,11 +38,11 @@ public class MainActivityViewModel extends AndroidViewModel {
         bluetoothService = new BluetoothServiceImpl(getContext(), mHandler);
     }
 
-    public LiveData<String> getServerResponseLiveData() {
-        if (serverResponse == null) {
-            serverResponse = new MutableLiveData<>();
+    public LiveData<ChartDataModel> getServerResponseLiveData() {
+        if (charts == null) {
+            charts = new MutableLiveData<>();
         }
-        return serverResponse;
+        return charts;
     }
 
     public LiveData<SocketStatus> getStatusLiveData() {
@@ -113,7 +113,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     break;
                 case Constants.MESSAGE_MEASURE_DONE:
                     ChartDataModel data = (ChartDataModel)msg.obj;
-                    serverResponse.postValue("complete");
+                    charts.postValue(data);
                     Toast.makeText(getContext(), "Measure done", Toast.LENGTH_SHORT).show();
                     break;
             }

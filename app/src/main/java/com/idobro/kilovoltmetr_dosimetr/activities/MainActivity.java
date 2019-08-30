@@ -17,7 +17,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.idobro.kilovoltmetr_dosimetr.activities.core.BaseActivity;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
 import com.idobro.kilovoltmetr_dosimetr.fragments.core.MainFragment;
@@ -91,7 +93,11 @@ public class MainActivity extends BaseActivity {
                 viewModel.enableNewMeasure();
                 return true;
             case R.id.show_chart:
-                addFragmentToContainer(new ChartsFragment());
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(ChartDataModel.CHARTS, new ChartDataModel());
+                Fragment chartsFragment = new ChartsFragment();
+                chartsFragment.setArguments(bundle);
+                addFragmentToContainer(chartsFragment);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -109,12 +115,15 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    class OnDataChartReceivedListener implements Observer<String> {
+    class OnDataChartReceivedListener implements Observer<ChartDataModel> {
 
         @Override
-        public void onChanged(String s) {
-            // TODO: 29.08.2019 send chart to fragment
-            addFragmentToContainer(new ChartsFragment());
+        public void onChanged(ChartDataModel charts) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(ChartDataModel.CHARTS, charts);
+            Fragment chartsFragment = new ChartsFragment();
+            chartsFragment.setArguments(bundle);
+            addFragmentToContainer(chartsFragment);
         }
     }
 
