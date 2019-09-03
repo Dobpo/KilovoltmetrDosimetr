@@ -22,6 +22,9 @@ public class ChartsFragment extends BaseFragment {
     private LineChart full_chart;
 
     private float[] frontArray;
+    private float[] frontFirstChanelArray;
+    private float[] frontSecondChanelArray;
+    private float[] frontThirdChanelArray;
     private float[] fullArray;
 
     @Override
@@ -32,10 +35,13 @@ public class ChartsFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null){
+        if (getArguments() != null) {
             ChartDataModel charts = getArguments().getParcelable(ChartDataModel.CHARTS);
             frontArray = charts.getFrontChartData();
             fullArray = charts.getFullChartData();
+            frontFirstChanelArray = charts.getFrontFirstChanel();
+            frontSecondChanelArray = charts.getFrontSecondChanel();
+            frontThirdChanelArray = charts.getFrontThirdChanel();
         }
     }
 
@@ -67,6 +73,9 @@ public class ChartsFragment extends BaseFragment {
         //Front chart
         ArrayList<ILineDataSet> frontDataSets = new ArrayList<>();
         ArrayList<Entry> frontValue = new ArrayList<>();
+        ArrayList<Entry> frontFirstValue = new ArrayList<>();
+        ArrayList<Entry> frontSecondValue = new ArrayList<>();
+        ArrayList<Entry> frontThirdValue = new ArrayList<>();
 
         for (int i = 0; i < frontArray.length; i++) {
             frontValue.add(new Entry(i, frontArray[i]));
@@ -80,7 +89,40 @@ public class ChartsFragment extends BaseFragment {
         frontLineDataSet.setDrawCircles(false);
         frontLineDataSet.setMode(LineDataSet.Mode.LINEAR);
         frontLineDataSet.setDrawFilled(false);
-        frontDataSets.add(frontLineDataSet);
+        //frontDataSets.add(frontLineDataSet);
+
+        for (int i = 0; i < frontFirstChanelArray.length; i++) {
+            frontFirstValue.add(new Entry(i,frontFirstChanelArray[i]));
+            frontSecondValue.add(new Entry(i,frontSecondChanelArray[i]));
+            frontThirdValue.add(new Entry(i,frontThirdChanelArray[i]));
+        }
+        LineDataSet frontFirstLineDataSet = new LineDataSet(frontFirstValue, "DataSet FrontFirst");
+        LineDataSet frontSecondLineDataSet = new LineDataSet(frontSecondValue, "DataSet FrontSecond");
+        LineDataSet frontThirdLineDataSet = new LineDataSet(frontThirdValue, "DataSet FrontThird");
+
+        frontFirstLineDataSet.setColor(Color.parseColor("#3F51B5"));
+        frontFirstLineDataSet.setLineWidth(2f);
+        frontFirstLineDataSet.setDrawValues(false);
+        frontFirstLineDataSet.setDrawCircles(false);
+        frontFirstLineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        frontFirstLineDataSet.setDrawFilled(false);
+        frontDataSets.add(frontFirstLineDataSet);
+
+        frontSecondLineDataSet.setColor(Color.parseColor("#cc3333"));
+        frontSecondLineDataSet.setLineWidth(2f);
+        frontSecondLineDataSet.setDrawValues(false);
+        frontSecondLineDataSet.setDrawCircles(false);
+        frontSecondLineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        frontSecondLineDataSet.setDrawFilled(false);
+        frontDataSets.add(frontSecondLineDataSet);
+
+        frontThirdLineDataSet.setColor(Color.parseColor("#931aa8"));
+        frontThirdLineDataSet.setLineWidth(2f);
+        frontThirdLineDataSet.setDrawValues(false);
+        frontThirdLineDataSet.setDrawCircles(false);
+        frontThirdLineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        frontThirdLineDataSet.setDrawFilled(false);
+        frontDataSets.add(frontThirdLineDataSet);
 
         front_chart.setData(new LineData(frontDataSets));
         front_chart.getLegend().setEnabled(false);
