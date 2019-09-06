@@ -104,6 +104,15 @@ public class MainActivity extends BaseActivity {
             case R.id.chart_count:
                 viewModel.showSavedChartsCount();
                 return true;
+            case R.id.show_50:
+                viewModel.showChartById(3);
+                return true;
+            case R.id.show_90:
+                viewModel.showChartById(4);
+                return true;
+            case R.id.show_75:
+                viewModel.showChartById(5);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

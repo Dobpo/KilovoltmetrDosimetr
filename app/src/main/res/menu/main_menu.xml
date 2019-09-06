@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/bluetooth_devices"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/bluetooth_devices"
         android:icon="@drawable/ic_device_24dp"
         android:title="@string/bluetooth_title"
-        app:showAsAction="always"
-        />
-    <item android:id="@+id/bluetooth_settings"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/bluetooth_settings"
         android:icon="@drawable/ic_settings_bluetooth_24dp"
         android:title="@string/bluetooth_title"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/new_measure_item"
-        android:title="@string/new_measure"/>
+        android:title="@string/new_measure" />
     <item
         android:id="@+id/show_chart"
         android:title="Show chart fragment"
@@ -22,9 +22,21 @@
     <item
         android:id="@+id/save_chart"
         android:title="Save chart"
-        tools:ignore="HardcodedText"/>
+        tools:ignore="HardcodedText" />
     <item
         android:id="@+id/chart_count"
         android:title="Show chart count"
-        tools:ignore="HardcodedText"/>
+        tools:ignore="HardcodedText" />
+    <item
+        android:id="@+id/show_50"
+        android:title="Show 50kv chart"
+        tools:ignore="HardcodedText" />
+    <item
+        android:id="@+id/show_90"
+        android:title="Show 90kv chart"
+        tools:ignore="HardcodedText" />
+    <item
+        android:id="@+id/show_75"
+        android:title="Show 75kv chart"
+        tools:ignore="HardcodedText" />
 </menu>

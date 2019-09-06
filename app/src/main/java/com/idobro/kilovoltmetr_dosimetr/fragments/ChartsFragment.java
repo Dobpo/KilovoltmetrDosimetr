@@ -26,6 +26,9 @@ public class ChartsFragment extends BaseFragment {
     private float[] frontSecondChanelArray;
     private float[] frontThirdChanelArray;
     private float[] fullArray;
+    private float[] fullFirstChanelArray;
+    private float[] fullSecondChanelArray;
+    private float[] fullThirdChanelArray;
 
     @Override
     protected int getResourceID() {
@@ -38,10 +41,13 @@ public class ChartsFragment extends BaseFragment {
         if (getArguments() != null) {
             ChartDataModel charts = getArguments().getParcelable(ChartDataModel.CHARTS);
             frontArray = charts.getFrontChartData();
-            fullArray = charts.getFullChartData();
             frontFirstChanelArray = charts.getFrontFirstChanel();
             frontSecondChanelArray = charts.getFrontSecondChanel();
             frontThirdChanelArray = charts.getFrontThirdChanel();
+            fullArray = charts.getFullChartData();
+            fullFirstChanelArray = charts.getFullFirstChanel();
+            fullSecondChanelArray = charts.getFullSecondChanel();
+            fullThirdChanelArray = charts.getFullThirdChanel();
         }
     }
 
@@ -131,6 +137,9 @@ public class ChartsFragment extends BaseFragment {
         //Full chart
         ArrayList<ILineDataSet> fullDataSets = new ArrayList<>();
         ArrayList<Entry> fullValue = new ArrayList<>();
+        ArrayList<Entry> fullFirstValue = new ArrayList<>();
+        ArrayList<Entry> fullSecondValue = new ArrayList<>();
+        ArrayList<Entry> fullThirdValue = new ArrayList<>();
 
         for (int i = 0; i < fullArray.length; i++) {
             fullValue.add(new Entry(i, fullArray[i]));
@@ -144,8 +153,40 @@ public class ChartsFragment extends BaseFragment {
         fullLineDataSet.setDrawCircles(false);
         fullLineDataSet.setMode(LineDataSet.Mode.LINEAR);
         fullLineDataSet.setDrawFilled(false);
+        //fullDataSets.add(fullLineDataSet);
 
-        fullDataSets.add(fullLineDataSet);
+        for (int i = 0; i < fullFirstChanelArray.length; i++) {
+            fullFirstValue.add(new Entry(i,fullFirstChanelArray[i]));
+            fullSecondValue.add(new Entry(i,fullSecondChanelArray[i]));
+            fullThirdValue.add(new Entry(i,fullThirdChanelArray[i]));
+        }
+        LineDataSet fullFirstLineDataSet = new LineDataSet(fullFirstValue, "DataSet FrontFirst");
+        LineDataSet fullSecondLineDataSet = new LineDataSet(fullSecondValue, "DataSet FrontSecond");
+        LineDataSet fullThirdLineDataSet = new LineDataSet(fullThirdValue, "DataSet FrontThird");
+
+        fullFirstLineDataSet.setColor(Color.parseColor("#3F51B5"));
+        fullFirstLineDataSet.setLineWidth(2f);
+        fullFirstLineDataSet.setDrawValues(false);
+        fullFirstLineDataSet.setDrawCircles(false);
+        fullFirstLineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        fullFirstLineDataSet.setDrawFilled(false);
+        fullDataSets.add(fullFirstLineDataSet);
+
+        fullSecondLineDataSet.setColor(Color.parseColor("#cc3333"));
+        fullSecondLineDataSet.setLineWidth(2f);
+        fullSecondLineDataSet.setDrawValues(false);
+        fullSecondLineDataSet.setDrawCircles(false);
+        fullSecondLineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        fullSecondLineDataSet.setDrawFilled(false);
+        fullDataSets.add(fullSecondLineDataSet);
+
+        fullThirdLineDataSet.setColor(Color.parseColor("#931aa8"));
+        fullThirdLineDataSet.setLineWidth(2f);
+        fullThirdLineDataSet.setDrawValues(false);
+        fullThirdLineDataSet.setDrawCircles(false);
+        fullThirdLineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        fullThirdLineDataSet.setDrawFilled(false);
+        fullDataSets.add(fullThirdLineDataSet);
 
         full_chart.setData(new LineData(fullDataSets));
         full_chart.getLegend().setEnabled(false);

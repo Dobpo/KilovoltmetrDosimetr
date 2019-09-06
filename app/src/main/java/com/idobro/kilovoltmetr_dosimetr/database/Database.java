@@ -57,4 +57,12 @@ public class Database implements DatabaseManager {
             handler.post(()->callback.onSuccess(count));
         }).start();
     }
+
+    @Override
+    public void getChartById(ResponseCallback<Chart> callback, long id) {
+        new Thread(()->{
+            Chart chart = db.chartDao().getById(id);
+            handler.post(()-> callback.onSuccess(chart));
+        }).start();
+    }
 }

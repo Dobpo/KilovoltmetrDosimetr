@@ -8,5 +8,5 @@ public interface DatabaseManager {
     void getLastChart(ResponseCallback<Chart> chart);
     void deleteAllChart();
     void getChartRecordsNumber(ResponseCallback<Integer> count);
-    void getChartById();
+    void getChartById(ResponseCallback<Chart> chart, long id);
 }

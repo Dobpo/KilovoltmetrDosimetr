@@ -91,6 +91,20 @@ public class MainActivityViewModel extends AndroidViewModel {
         }
     }
 
+    public void showChartById(long id){
+        databaseManager.getChartById(new ResponseCallback<Chart>() {
+            @Override
+            public void onSuccess(Chart response) {
+                charts.postValue(new ChartDataModel(response));
+            }
+
+            @Override
+            public void onError(Error error) {
+
+            }
+        }, id);
+    }
+
     public void showSavedChartsCount() {
         databaseManager.getChartRecordsNumber(new ResponseCallback<Integer>() {
             @Override
