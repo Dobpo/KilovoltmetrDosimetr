@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.idobro.kilovoltmetr_dosimetr.database.entities.Chart;
 import com.idobro.kilovoltmetr_dosimetr.utils.ByteToIntConverter;
 
 import java.util.ArrayList;
@@ -33,6 +34,11 @@ public class ChartDataModel implements Parcelable {
         for (int i = 0; i < fullChartData.length; i++) {
             fullChartData[i] = 100;
         }
+    }
+    
+    public ChartDataModel(Chart chart){
+        frontDataArray = chart.getFrontChartData();
+        fullDataArray = chart.getFullChartData();
     }
 
     public ChartDataModel(ArrayList<Byte> arrayList) {
