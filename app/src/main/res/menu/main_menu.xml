@@ -19,4 +19,12 @@
         android:id="@+id/show_chart"
         android:title="Show chart fragment"
         tools:ignore="HardcodedText" />
+    <item
+        android:id="@+id/save_chart"
+        android:title="Save chart"
+        tools:ignore="HardcodedText"/>
+    <item
+        android:id="@+id/chart_count"
+        android:title="Show chart count"
+        tools:ignore="HardcodedText"/>
 </menu>

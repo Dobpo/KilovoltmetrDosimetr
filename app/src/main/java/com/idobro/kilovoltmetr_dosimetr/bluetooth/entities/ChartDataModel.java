@@ -35,10 +35,12 @@ public class ChartDataModel implements Parcelable {
             fullChartData[i] = 100;
         }
     }
-    
-    public ChartDataModel(Chart chart){
-        frontDataArray = chart.getFrontChartData();
-        fullDataArray = chart.getFullChartData();
+
+    public ChartDataModel(Chart chart) {
+        frontDataArray = new ArrayList<>();
+        fullDataArray = new ArrayList<>();
+        for (byte b : chart.getFrontChartData()) frontDataArray.add(b);
+        for (byte b : chart.getFullChartData()) fullDataArray.add(b);
     }
 
     public ChartDataModel(ArrayList<Byte> arrayList) {
@@ -46,7 +48,24 @@ public class ChartDataModel implements Parcelable {
         this.fullChartLength = ByteToIntConverter.getUnsignedInt(arrayList.get(3), arrayList.get(4));
     }
 
+    public byte[] getFrontByteArray(){
+        byte[] array = new byte[frontDataArray.size()];
+        for(int i = 0; i<array.length;i++){
+            array[i] = frontDataArray.get(i);
+        }
+        return array;
+    }
+
+    public byte[] getFullByteArray(){
+        byte[] array = new byte[fullDataArray.size()];
+        for(int i = 0; i<array.length;i++){
+            array[i] = fullDataArray.get(i);
+        }
+        return array;
+    }
+
     public void setFrontDataArray(ArrayList<Byte> frontDataArray) {
+        this.frontDataArray = frontDataArray;
         frontChartData = new float[frontDataArray.size() / 3];
         frontFirstChanel = new float[frontDataArray.size() / 3];
         frontSecondChanel = new float[frontDataArray.size() / 3];
@@ -60,12 +79,21 @@ public class ChartDataModel implements Parcelable {
     }
 
     public void setFullDataArray(ArrayList<Byte> fullDataArray) {
+        this.fullDataArray = fullDataArray;
         fullChartData = new float[(fullDataArray.size() / 3)];
         for (int i = 0; i < (fullDataArray.size() / 3); i++) {
             fullChartData[i] = (float) ((fullDataArray.get(i) & 0xFF) +
                     (fullDataArray.get(i + 1) & 0xFF) +
                     (fullDataArray.get(i + 2) & 0xFF)) / 3;
         }
+    }
+
+    public ArrayList<Byte> getFrontDataArray() {
+        return frontDataArray;
+    }
+
+    public ArrayList<Byte> getFullDataArray() {
+        return fullDataArray;
     }
 
     public float[] getFrontChartData() {

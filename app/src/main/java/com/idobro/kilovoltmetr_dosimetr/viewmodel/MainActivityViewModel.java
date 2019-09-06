@@ -17,11 +17,18 @@ import com.idobro.kilovoltmetr_dosimetr.Constants;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.core.BluetoothService;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothServiceImpl;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
+import com.idobro.kilovoltmetr_dosimetr.database.Database;
+import com.idobro.kilovoltmetr_dosimetr.database.core.DatabaseManager;
+import com.idobro.kilovoltmetr_dosimetr.database.entities.Chart;
+
+import java.util.Calendar;
 
 public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<ChartDataModel> charts;
     private MutableLiveData<SocketStatus> connectStatus;
     private BluetoothService bluetoothService;
+    private DatabaseManager databaseManager;
+    private Chart chart;
 
     public enum SocketStatus {
         DISCONNECT,
@@ -36,6 +43,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
         bluetoothService = new BluetoothServiceImpl(getContext(), mHandler);
+        databaseManager = new Database(getContext());
     }
 
     public LiveData<ChartDataModel> getServerResponseLiveData() {
@@ -76,6 +84,27 @@ public class MainActivityViewModel extends AndroidViewModel {
         bluetoothService.enableNewMeasure();
     }
 
+    public void saveChart() {
+        if (chart != null) {
+            databaseManager.addNewChart(chart);
+            showSavedChartsCount();
+        }
+    }
+
+    public void showSavedChartsCount() {
+        databaseManager.getChartRecordsNumber(new ResponseCallback<Integer>() {
+            @Override
+            public void onSuccess(Integer response) {
+                Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Error error) {
+
+            }
+        });
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -112,7 +141,10 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
                     break;
                 case Constants.MESSAGE_MEASURE_DONE:
-                    ChartDataModel data = (ChartDataModel)msg.obj;
+                    ChartDataModel data = (ChartDataModel) msg.obj;
+                    chart = new Chart(data.getFrontByteArray(),
+                            data.getFullByteArray(),
+                            Calendar.getInstance().getTime().getTime());
                     charts.postValue(data);
                     Toast.makeText(getContext(), "Measure done", Toast.LENGTH_SHORT).show();
                     break;

@@ -5,7 +5,8 @@ import com.idobro.kilovoltmetr_dosimetr.viewmodel.ResponseCallback;
 
 public interface DatabaseManager {
     void addNewChart(Chart chart);
-    void getLastChart(ResponseCallback callback);
+    void getLastChart(ResponseCallback<Chart> chart);
     void deleteAllChart();
-    void getChartRecordsNumber(ResponseCallback callback);
+    void getChartRecordsNumber(ResponseCallback<Integer> count);
+    void getChartById();
 }

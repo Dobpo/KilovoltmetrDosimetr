@@ -11,13 +11,13 @@ public class Chart {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
-    private ArrayList<Byte> frontChartData;
-    private ArrayList<Byte> fullChartData;
+    private byte[] frontChartData;
+    private byte[] fullChartData;
 
     @ColumnInfo(index = true)
     private long date;
 
-    public Chart(ArrayList<Byte> frontChartData, ArrayList<Byte> fullChartData, long date) {
+    public Chart(byte[] frontChartData, byte[] fullChartData, long date) {
         this.frontChartData = frontChartData;
         this.fullChartData = fullChartData;
         this.date = date;
@@ -27,11 +27,11 @@ public class Chart {
         return id;
     }
 
-    public ArrayList<Byte> getFrontChartData() {
+    public byte[] getFrontChartData() {
         return frontChartData;
     }
 
-    public ArrayList<Byte> getFullChartData() {
+    public byte[] getFullChartData() {
         return fullChartData;
     }
 
@@ -43,15 +43,17 @@ public class Chart {
         this.id = id;
     }
 
-    public void setFrontChartData(ArrayList<Byte> frontChartData) {
+    public void setFrontChartData(byte[] frontChartData) {
         this.frontChartData = frontChartData;
     }
 
-    public void setFullChartData(ArrayList<Byte> fullChartData) {
+    public void setFullChartData(byte[] fullChartData) {
         this.fullChartData = fullChartData;
     }
 
     public void setDate(long date) {
         this.date = date;
     }
+
+
 }

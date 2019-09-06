@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.github.mikephil.charting.charts.Chart;
 import com.idobro.kilovoltmetr_dosimetr.activities.core.BaseActivity;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
@@ -98,6 +97,12 @@ public class MainActivity extends BaseActivity {
                 Fragment chartsFragment = new ChartsFragment();
                 chartsFragment.setArguments(bundle);
                 addFragmentToContainer(chartsFragment);
+                return true;
+            case R.id.save_chart:
+                viewModel.saveChart();
+                return true;
+            case R.id.chart_count:
+                viewModel.showSavedChartsCount();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
