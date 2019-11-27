@@ -17,7 +17,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <ListView
-        android:id="@+id/devices_list_view"
+        android:id="@+id/devicesListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

@@ -15,13 +15,14 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelStore;
 
-import com.idobro.kilovoltmetr_dosimetr.activities.core.BaseActivity;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
-import com.idobro.kilovoltmetr_dosimetr.fragments.core.MainFragment;
+import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
@@ -29,22 +30,24 @@ import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
 import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity {
+    private TextView status_text_view;
+    private ImageView bluetooth_status_image_view;
+    private RelativeLayout content_layout;
+
     private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
-    private TextView status_text_view;
-
-    private ImageView bluetooth_status_image_view;
-    private RelativeLayout content_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         setSupportActionBar(findViewById(R.id.toolbar));
-        status_text_view = findViewById(R.id.status_text_view);
-        bluetooth_status_image_view = findViewById(R.id.bluetooth_status_image_view);
-        content_layout = findViewById(R.id.content_relative_layout);
+        status_text_view = findViewById(R.id.statusTextView);
+        bluetooth_status_image_view = findViewById(R.id.bluetoothStatusImageView);
+        content_layout = findViewById(R.id.contentRelativeLayout);
+
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
     }
 

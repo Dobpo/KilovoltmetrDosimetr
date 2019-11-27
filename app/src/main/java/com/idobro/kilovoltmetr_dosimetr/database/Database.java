@@ -2,11 +2,10 @@ package com.idobro.kilovoltmetr_dosimetr.database;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 
 import androidx.room.Room;
 
-import com.idobro.kilovoltmetr_dosimetr.database.core.AppDatabase;
-import com.idobro.kilovoltmetr_dosimetr.database.core.DatabaseManager;
 import com.idobro.kilovoltmetr_dosimetr.database.dao.ChartDao;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Chart;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.ResponseCallback;
@@ -14,46 +13,45 @@ import com.idobro.kilovoltmetr_dosimetr.viewmodel.ResponseCallback;
 import java.util.List;
 
 public class Database implements DatabaseManager {
-    private AppDatabase db;
     private ChartDao chartDao;
-    private Handler handler = new Handler();
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     public Database(Context context) {
-        db = Room.databaseBuilder(context, AppDatabase.class, "kilovoltmetrDb")
+        AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, "kilovoltmetrDb")
         .fallbackToDestructiveMigration().build();
-        this.chartDao = chartDao;
+        chartDao = db.chartDao();
     }
 
     @Override
     public void addNewChart(Chart chart) {
         new Thread(()->{
-            List<Chart> charts = db.chartDao().getAll();
+            List<Chart> charts = chartDao.getAll();
             if (charts.size() >= 30) {
-                Chart firstEmp = db.chartDao().getFirstInsert();
-                db.chartDao().delete(firstEmp);
+                Chart firstEmp = chartDao.getFirstInsert();
+                chartDao.delete(firstEmp);
             }
-            db.chartDao().insert(chart);
+            chartDao.insert(chart);
         }).start();
     }
 
     @Override
     public void getLastChart(ResponseCallback<Chart> callback) {
-        Chart chart = db.chartDao().getLastInsert();
+        Chart chart = chartDao.getLastInsert();
         handler.post(()->callback.onSuccess(chart));
     }
 
     @Override
     public void deleteAllChart() {
         new Thread(() -> {
-            List<Chart> charts = db.chartDao().getAll();
-            db.chartDao().deleteAll(charts);
+            List<Chart> charts = chartDao.getAll();
+            chartDao.deleteAll(charts);
         }).start();
     }
 
     @Override
     public void getChartRecordsNumber(ResponseCallback<Integer> callback) {
         new Thread(() -> {
-            int count = db.chartDao().getAll().size();
+            int count = chartDao.getAll().size();
             handler.post(()->callback.onSuccess(count));
         }).start();
     }
@@ -61,7 +59,7 @@ public class Database implements DatabaseManager {
     @Override
     public void getChartById(ResponseCallback<Chart> callback, long id) {
         new Thread(()->{
-            Chart chart = db.chartDao().getById(id);
+            Chart chart = chartDao.getById(id);
             handler.post(()-> callback.onSuccess(chart));
         }).start();
     }

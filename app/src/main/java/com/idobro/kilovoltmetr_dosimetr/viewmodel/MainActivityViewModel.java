@@ -14,11 +14,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.core.BluetoothService;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothService;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothServiceImpl;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.database.Database;
-import com.idobro.kilovoltmetr_dosimetr.database.core.DatabaseManager;
+import com.idobro.kilovoltmetr_dosimetr.database.DatabaseManager;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Chart;
 
 import java.util.Calendar;
@@ -38,7 +38,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         WAIT_X_RAY,
         LOAD_CHART_DATA
     }
-
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);

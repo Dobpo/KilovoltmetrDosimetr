@@ -6,8 +6,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
-import com.idobro.kilovoltmetr_dosimetr.fragments.core.BaseFragment;
-import com.idobro.kilovoltmetr_dosimetr.fragments.core.MainFragment;
 
 public class MainFragmentImpl extends BaseFragment implements MainFragment {
     private TextView text_view;
@@ -22,10 +20,10 @@ public class MainFragmentImpl extends BaseFragment implements MainFragment {
 
     @Override
     protected void initUI(View rootView) {
-        text_view = rootView.findViewById(R.id.text_view);
+        text_view = rootView.findViewById(R.id.messageTextView);
         if (getArguments() != null)
         text_view.setText(getArguments().getString(MainFragment.MESSAGE));
-        progress_bar = rootView.findViewById(R.id.progress_bar);
+        progress_bar = rootView.findViewById(R.id.progressBar);
     }
 
     @Override

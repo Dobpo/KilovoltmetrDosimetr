@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.core.BluetoothService;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 
 import java.io.IOException;

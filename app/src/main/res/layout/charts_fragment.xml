@@ -5,14 +5,14 @@
     android:orientation="vertical">
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/front_chart"
+        android:id="@+id/frontChart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"
         android:layout_weight="1" />
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/full_chart"
+        android:id="@+id/fullChart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="10dp"

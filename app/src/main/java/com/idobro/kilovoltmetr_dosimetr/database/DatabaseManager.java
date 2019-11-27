@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.database.core;
+package com.idobro.kilovoltmetr_dosimetr.database;
 
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Chart;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.ResponseCallback;

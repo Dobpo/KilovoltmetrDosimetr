@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.fragments.core;
+package com.idobro.kilovoltmetr_dosimetr.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

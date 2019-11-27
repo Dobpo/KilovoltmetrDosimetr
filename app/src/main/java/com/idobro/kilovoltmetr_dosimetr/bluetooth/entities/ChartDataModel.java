@@ -176,12 +176,12 @@ public class ChartDataModel implements Parcelable {
         dest.writeFloatArray(this.fullChartData);
     }
 
-    protected ChartDataModel(Parcel in) {
+    private ChartDataModel(Parcel in) {
         this.frontChartLength = in.readInt();
         this.fullChartLength = in.readInt();
-        this.frontDataArray = new ArrayList<Byte>();
+        this.frontDataArray = new ArrayList<>();
         in.readList(this.frontDataArray, Byte.class.getClassLoader());
-        this.fullDataArray = new ArrayList<Byte>();
+        this.fullDataArray = new ArrayList<>();
         in.readList(this.fullDataArray, Byte.class.getClassLoader());
         this.frontChartData = in.createFloatArray();
         this.frontFirstChanel = in.createFloatArray();

@@ -13,7 +13,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
-import com.idobro.kilovoltmetr_dosimetr.fragments.core.BaseFragment;
 
 import java.util.ArrayList;
 
@@ -40,21 +39,23 @@ public class ChartsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             ChartDataModel charts = getArguments().getParcelable(ChartDataModel.CHARTS);
-            frontArray = charts.getFrontChartData();
-            frontFirstChanelArray = charts.getFrontFirstChanel();
-            frontSecondChanelArray = charts.getFrontSecondChanel();
-            frontThirdChanelArray = charts.getFrontThirdChanel();
-            fullArray = charts.getFullChartData();
-            fullFirstChanelArray = charts.getFullFirstChanel();
-            fullSecondChanelArray = charts.getFullSecondChanel();
-            fullThirdChanelArray = charts.getFullThirdChanel();
+            if (charts != null) {
+                frontArray = charts.getFrontChartData();
+                frontFirstChanelArray = charts.getFrontFirstChanel();
+                frontSecondChanelArray = charts.getFrontSecondChanel();
+                frontThirdChanelArray = charts.getFrontThirdChanel();
+                fullArray = charts.getFullChartData();
+                fullFirstChanelArray = charts.getFullFirstChanel();
+                fullSecondChanelArray = charts.getFullSecondChanel();
+                fullThirdChanelArray = charts.getFullThirdChanel();
+            }
         }
     }
 
     @Override
     protected void initUI(View rootView) {
-        front_chart = rootView.findViewById(R.id.front_chart);
-        full_chart = rootView.findViewById(R.id.full_chart);
+        front_chart = rootView.findViewById(R.id.frontChart);
+        full_chart = rootView.findViewById(R.id.fullChart);
 
         initChart(front_chart);
         initChart(full_chart);
@@ -98,9 +99,9 @@ public class ChartsFragment extends BaseFragment {
         //frontDataSets.add(frontLineDataSet);
 
         for (int i = 0; i < frontFirstChanelArray.length; i++) {
-            frontFirstValue.add(new Entry(i,frontFirstChanelArray[i]));
-            frontSecondValue.add(new Entry(i,frontSecondChanelArray[i]));
-            frontThirdValue.add(new Entry(i,frontThirdChanelArray[i]));
+            frontFirstValue.add(new Entry(i, frontFirstChanelArray[i]));
+            frontSecondValue.add(new Entry(i, frontSecondChanelArray[i]));
+            frontThirdValue.add(new Entry(i, frontThirdChanelArray[i]));
         }
         LineDataSet frontFirstLineDataSet = new LineDataSet(frontFirstValue, "DataSet FrontFirst");
         LineDataSet frontSecondLineDataSet = new LineDataSet(frontSecondValue, "DataSet FrontSecond");
@@ -156,9 +157,9 @@ public class ChartsFragment extends BaseFragment {
         //fullDataSets.add(fullLineDataSet);
 
         for (int i = 0; i < fullFirstChanelArray.length; i++) {
-            fullFirstValue.add(new Entry(i,fullFirstChanelArray[i]));
-            fullSecondValue.add(new Entry(i,fullSecondChanelArray[i]));
-            fullThirdValue.add(new Entry(i,fullThirdChanelArray[i]));
+            fullFirstValue.add(new Entry(i, fullFirstChanelArray[i]));
+            fullSecondValue.add(new Entry(i, fullSecondChanelArray[i]));
+            fullThirdValue.add(new Entry(i, fullThirdChanelArray[i]));
         }
         LineDataSet fullFirstLineDataSet = new LineDataSet(fullFirstValue, "DataSet FrontFirst");
         LineDataSet fullSecondLineDataSet = new LineDataSet(fullSecondValue, "DataSet FrontSecond");

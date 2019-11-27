@@ -37,7 +37,7 @@ public class SelectDeviceActivity extends AppCompatActivity{
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_select_device);
 
-        devices_list_view = findViewById(R.id.devices_list_view);
+        devices_list_view = findViewById(R.id.devicesListView);
         header = findViewById(R.id.header);
 
         devices_list_view.setOnItemClickListener(new OnDeviceClickListener());
@@ -58,8 +58,8 @@ public class SelectDeviceActivity extends AppCompatActivity{
                     if (convertView == null)
                         convertView = getLayoutInflater().inflate(R.layout.device_list_item,
                                 parent, false);
-                    TextView text1 = convertView.findViewById(R.id.text1);
-                    TextView text2 = convertView.findViewById(R.id.text2);
+                    TextView text1 = convertView.findViewById(R.id.nameText);
+                    TextView text2 = convertView.findViewById(R.id.macText);
                     text1.setText(device.getName());
                     text2.setText(device.getAddress());
                     return convertView;

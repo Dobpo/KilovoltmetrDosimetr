@@ -11,5 +11,4 @@
         android:gravity="center"
         android:text="@string/select_bluetooth_device"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
 </LinearLayout>

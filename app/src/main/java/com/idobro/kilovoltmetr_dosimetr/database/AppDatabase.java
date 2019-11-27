@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.database.core;
+package com.idobro.kilovoltmetr_dosimetr.database;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;

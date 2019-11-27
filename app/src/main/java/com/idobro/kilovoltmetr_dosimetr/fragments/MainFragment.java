@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.fragments.core;
+package com.idobro.kilovoltmetr_dosimetr.fragments;
 
 public interface MainFragment {
     String MESSAGE = "message";

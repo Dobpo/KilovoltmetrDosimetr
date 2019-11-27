@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.activities.core;
+package com.idobro.kilovoltmetr_dosimetr.activities;
 
 import android.os.Bundle;
 
@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
-import com.idobro.kilovoltmetr_dosimetr.fragments.core.MainFragment;
+import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private int getIdFragmentContainer() {
-        return R.id.fragment_container;
+        return R.id.fragmentContainer;
     }
 
     protected MainFragment getMainFragment() {

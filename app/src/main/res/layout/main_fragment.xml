@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/text_view"
+        android:id="@+id/messageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -13,11 +13,11 @@
         android:text="@string/connect_the_sensor" />
 
     <ProgressBar
-        android:id="@+id/progress_bar"
+        android:id="@+id/progressBar"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="240dp"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/text_view"
+        android:layout_below="@+id/messageTextView"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:visibility="gone"/>
