@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.lifecycle.ViewModelStore;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
@@ -29,10 +30,18 @@ import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends BaseActivity {
-    private TextView status_text_view;
-    private ImageView bluetooth_status_image_view;
-    private RelativeLayout content_layout;
+    @BindView(R.id.statusTextView)
+    TextView statusTextView;
+
+    @BindView(R.id.bluetoothStatusImageView)
+    ImageView bluetoothStatusImageView;
+
+    @BindView(R.id.contentRelativeLayout)
+    RelativeLayout contentRelativeLayout;
 
     private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -42,13 +51,9 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
         setSupportActionBar(findViewById(R.id.toolbar));
-        status_text_view = findViewById(R.id.statusTextView);
-        bluetooth_status_image_view = findViewById(R.id.bluetoothStatusImageView);
-        content_layout = findViewById(R.id.contentRelativeLayout);
-
-        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
     }
 
     @Override
@@ -150,30 +155,30 @@ public class MainActivity extends BaseActivity {
         public void onChanged(MainActivityViewModel.SocketStatus status) {
             switch (status) {
                 case DISCONNECT:
-                    status_text_view.setText(R.string.disconnected);
-                    bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
+                    statusTextView.setText(R.string.disconnected);
+                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
                     Toast.makeText(MainActivity.this, "Connect with sensor was lost",
                             Toast.LENGTH_SHORT).show();
                     break;
                 case PENDING:
-                    status_text_view.setText(R.string.connecting);
-                    bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_searching_24dp);
+                    statusTextView.setText(R.string.connecting);
+                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_searching_24dp);
                     if (isMainFragmentExist())
                         getMainFragment().onConnecting();
                     break;
                 case COULD_NOT_CONNECT:
-                    status_text_view.setText(R.string.disconnected);
-                    bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
+                    statusTextView.setText(R.string.disconnected);
+                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
                     Toast.makeText(MainActivity.this, "Couldn't connect to sensor",
                             Toast.LENGTH_SHORT).show();
                     if (isMainFragmentExist())
                         getMainFragment().onDisconnect();
                     break;
                 case CONNECTED:
-                    bluetooth_status_image_view.setImageResource(R.drawable.ic_bluetooth_connected_24dp);
-                    content_layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(),
+                    statusTextView.setText(R.string.connected);
+                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_connected_24dp);
+                    contentRelativeLayout.setBackgroundColor(ContextCompat.getColor(getBaseContext(),
                             R.color.secondaryColor));
-                    status_text_view.setText(R.string.connected);
                     if (isMainFragmentExist())
                         getMainFragment().waitForNewMeasure();
                     break;

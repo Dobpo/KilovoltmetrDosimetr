@@ -1,9 +1,5 @@
 package com.idobro.kilovoltmetr_dosimetr.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,20 +11,30 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
 
 import java.util.ArrayList;
 
-public class SelectDeviceActivity extends AppCompatActivity{
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class SelectDeviceActivity extends AppCompatActivity {
 
     public final static String DEVICES = "devices";
     public final static String SELECTED_DEVICE = "selected_device_address";
     public final static int GET_DEVICE_REQUEST = 1;
 
-    private ListView devices_list_view;
-    private TextView header;
-    private ArrayAdapter<BluetoothDevice> listAdapter;
+    @BindView(R.id.devicesListView)
+    ListView devicesListView;
+
+    @BindView(R.id.header)
+    TextView header;
+
     private ArrayList<BluetoothDevice> deviceList;
 
     @Override
@@ -36,21 +42,21 @@ public class SelectDeviceActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_select_device);
+        ButterKnife.bind(this);
 
-        devices_list_view = findViewById(R.id.devicesListView);
-        header = findViewById(R.id.header);
-
-        devices_list_view.setOnItemClickListener(new OnDeviceClickListener());
+        devicesListView.setOnItemClickListener(new OnDeviceClickListener());
 
         Intent intent = getIntent();
         BluetoothDevices devices = intent.getParcelableExtra(DEVICES);
-        deviceList = devices.getDevices();
-        initListView(deviceList);
+        if (devices != null) {
+            deviceList = devices.getDevices();
+            initListView(deviceList);
+        }
     }
 
-    private void initListView(ArrayList<BluetoothDevice> deviceList){
+    private void initListView(ArrayList<BluetoothDevice> deviceList) {
         if (deviceList.size() > 0) {
-            listAdapter = new ArrayAdapter<BluetoothDevice>(this, 0, deviceList) {
+            ArrayAdapter<BluetoothDevice> listAdapter = new ArrayAdapter<BluetoothDevice>(this, 0, deviceList) {
                 @NonNull
                 @Override
                 public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -65,13 +71,13 @@ public class SelectDeviceActivity extends AppCompatActivity{
                     return convertView;
                 }
             };
-            devices_list_view.setAdapter(listAdapter);
+            devicesListView.setAdapter(listAdapter);
         } else {
             header.setText(this.getString(R.string.no_device_found));
         }
     }
 
-    private class OnDeviceClickListener implements AdapterView.OnItemClickListener{
+    private class OnDeviceClickListener implements AdapterView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

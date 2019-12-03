@@ -1,57 +1,78 @@
 package com.idobro.kilovoltmetr_dosimetr.fragments;
 
+import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.idobro.kilovoltmetr_dosimetr.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainFragmentImpl extends BaseFragment implements MainFragment {
-    private TextView text_view;
-    private ProgressBar progress_bar;
+    @BindView(R.id.messageTextView)
+    TextView messageTextView;
+
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
     private Handler handler = new Handler();
     private int progressStatus = 0;
 
     @Override
-    protected int getResourceID() {
-        return R.layout.main_fragment;
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.main_fragment, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
-    protected void initUI(View rootView) {
-        text_view = rootView.findViewById(R.id.messageTextView);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null)
-        text_view.setText(getArguments().getString(MainFragment.MESSAGE));
-        progress_bar = rootView.findViewById(R.id.progressBar);
+            messageTextView.setText(getArguments().getString(MainFragment.MESSAGE));
     }
 
     @Override
     public void onDisconnect() {
-        text_view.setText(R.string.connect_the_sensor);
-        progress_bar.setVisibility(View.GONE);
+        messageTextView.setText(R.string.connect_the_sensor);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onConnecting() {
-        text_view.setText(R.string.connecting);
-        progress_bar.setIndeterminate(true);
-        progress_bar.setVisibility(View.VISIBLE);
+        messageTextView.setText(R.string.connecting);
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void waitForNewMeasure() {
-        text_view.setText(R.string.enable_new_measure);
-        progress_bar.setVisibility(View.GONE);
+        messageTextView.setText(R.string.enable_new_measure);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onXRay() {
-        text_view.setText(R.string.loading_data);
-        progress_bar.setIndeterminate(false);
-        progress_bar.setProgress(0);
-        progress_bar.setMax(1000);
-        progress_bar.setVisibility(View.VISIBLE);
+        messageTextView.setText(R.string.loading_data);
+        progressBar.setIndeterminate(false);
+        progressBar.setProgress(0);
+        progressBar.setMax(1000);
+        progressBar.setVisibility(View.VISIBLE);
         progressStatus = 0;
 
         new Thread(() -> {
@@ -63,14 +84,14 @@ public class MainFragmentImpl extends BaseFragment implements MainFragment {
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
-                handler.post(() -> progress_bar.setProgress(progressStatus));
+                handler.post(() -> progressBar.setProgress(progressStatus));
             }
         }).start();
     }
 
     @Override
     public void waitForXRay() {
-        text_view.setText(R.string.waiting_for_xray);
-        progress_bar.setVisibility(View.GONE);
+        messageTextView.setText(R.string.waiting_for_xray);
+        progressBar.setVisibility(View.GONE);
     }
 }

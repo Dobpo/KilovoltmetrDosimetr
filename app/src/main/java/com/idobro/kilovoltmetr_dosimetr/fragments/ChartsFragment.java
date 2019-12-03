@@ -2,8 +2,11 @@ package com.idobro.kilovoltmetr_dosimetr.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -16,9 +19,14 @@ import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ChartsFragment extends BaseFragment {
-    private LineChart front_chart;
-    private LineChart full_chart;
+    @BindView(R.id.frontChart)
+    LineChart frontChart;
+    @BindView(R.id.fullChart)
+    LineChart fullChart;
 
     private float[] frontArray;
     private float[] frontFirstChanelArray;
@@ -30,13 +38,9 @@ public class ChartsFragment extends BaseFragment {
     private float[] fullThirdChanelArray;
 
     @Override
-    protected int getResourceID() {
-        return R.layout.charts_fragment;
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             ChartDataModel charts = getArguments().getParcelable(ChartDataModel.CHARTS);
             if (charts != null) {
@@ -52,14 +56,19 @@ public class ChartsFragment extends BaseFragment {
         }
     }
 
+    @Nullable
     @Override
-    protected void initUI(View rootView) {
-        front_chart = rootView.findViewById(R.id.frontChart);
-        full_chart = rootView.findViewById(R.id.fullChart);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.charts_fragment, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
 
-        initChart(front_chart);
-        initChart(full_chart);
-
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initChart(frontChart);
+        initChart(fullChart);
         setDataToCharts();
     }
 
@@ -131,9 +140,9 @@ public class ChartsFragment extends BaseFragment {
         frontThirdLineDataSet.setDrawFilled(false);
         frontDataSets.add(frontThirdLineDataSet);
 
-        front_chart.setData(new LineData(frontDataSets));
-        front_chart.getLegend().setEnabled(false);
-        front_chart.invalidate();
+        frontChart.setData(new LineData(frontDataSets));
+        frontChart.getLegend().setEnabled(false);
+        frontChart.invalidate();
 
         //Full chart
         ArrayList<ILineDataSet> fullDataSets = new ArrayList<>();
@@ -189,8 +198,8 @@ public class ChartsFragment extends BaseFragment {
         fullThirdLineDataSet.setDrawFilled(false);
         fullDataSets.add(fullThirdLineDataSet);
 
-        full_chart.setData(new LineData(fullDataSets));
-        full_chart.getLegend().setEnabled(false);
-        full_chart.invalidate();
+        fullChart.setData(new LineData(fullDataSets));
+        fullChart.getLegend().setEnabled(false);
+        fullChart.invalidate();
     }
 }
