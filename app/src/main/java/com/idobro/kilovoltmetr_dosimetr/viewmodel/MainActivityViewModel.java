@@ -14,8 +14,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothService;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothServiceImpl;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothManager;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothManagerImpl;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.database.Database;
 import com.idobro.kilovoltmetr_dosimetr.database.DatabaseManager;
@@ -26,7 +26,7 @@ import java.util.Calendar;
 public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<ChartDataModel> charts;
     private MutableLiveData<SocketStatus> connectStatus;
-    private BluetoothService bluetoothService;
+    private BluetoothManager bluetoothManager;
     private DatabaseManager databaseManager;
     private Chart chart;
 
@@ -41,7 +41,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
-        bluetoothService = new BluetoothServiceImpl(getContext(), mHandler);
+        bluetoothManager = new BluetoothManagerImpl(getContext(), mHandler);
         databaseManager = new Database(getContext());
     }
 
@@ -71,16 +71,16 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void connect(BluetoothDevice device) {
-        bluetoothService.connect(device);
+        bluetoothManager.connect(device);
     }
 
     private void disconnect() {
-        bluetoothService.stop();
-        bluetoothService = null;
+        bluetoothManager.stop();
+        bluetoothManager = null;
     }
 
     public void enableNewMeasure() {
-        bluetoothService.enableNewMeasure();
+        bluetoothManager.enableNewMeasure();
     }
 
     public void saveChart() {
@@ -118,9 +118,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
     }
 
-    /**
-     * The Handler that gets information back from the BluetoothChatService
-     */
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -128,13 +125,13 @@ public class MainActivityViewModel extends AndroidViewModel {
             switch (msg.what) {
                 case Constants.MESSAGE_CONNECT_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothServiceImpl.STATE_CONNECTED:
+                        case BluetoothManagerImpl.STATE_CONNECTED:
                             connectStatus.postValue(SocketStatus.CONNECTED);
                             break;
-                        case BluetoothServiceImpl.STATE_CONNECTING:
+                        case BluetoothManagerImpl.STATE_CONNECTING:
                             connectStatus.postValue(SocketStatus.PENDING);
                             break;
-                        case BluetoothServiceImpl.STATE_NONE:
+                        case BluetoothManagerImpl.STATE_NONE:
                             connectStatus.postValue(SocketStatus.DISCONNECT);
                             break;
                     }
@@ -145,10 +142,10 @@ public class MainActivityViewModel extends AndroidViewModel {
                     break;
                 case Constants.MESSAGE_SENSOR_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothServiceImpl.WAIT_FOR_X_RAY:
+                        case BluetoothManagerImpl.WAIT_FOR_X_RAY:
                             connectStatus.postValue(SocketStatus.WAIT_X_RAY);
                             break;
-                        case BluetoothServiceImpl.WAIT_FOR_END_X_RAY:
+                        case BluetoothManagerImpl.WAIT_FOR_END_X_RAY:
                             connectStatus.postValue(SocketStatus.LOAD_CHART_DATA);
                             break;
                     }

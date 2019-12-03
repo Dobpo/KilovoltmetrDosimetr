@@ -76,12 +76,12 @@ public class MainFragmentImpl extends BaseFragment implements MainFragment {
         progressStatus = 0;
 
         new Thread(() -> {
-            while(progressStatus < 1000){
-                progressStatus +=1;
+            while (progressStatus < 1000) {
+                progressStatus += 1;
 
-                try{
+                try {
                     Thread.sleep(15);
-                }catch(InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 handler.post(() -> progressBar.setProgress(progressStatus));

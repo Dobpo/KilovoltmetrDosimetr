@@ -24,7 +24,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SelectDeviceActivity extends AppCompatActivity {
-
     public final static String DEVICES = "devices";
     public final static String SELECTED_DEVICE = "selected_device_address";
     public final static int GET_DEVICE_REQUEST = 1;

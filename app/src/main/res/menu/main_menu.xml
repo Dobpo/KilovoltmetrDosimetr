@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/bluetooth_devices"
-        android:icon="@drawable/ic_device_24dp"
+        android:icon="@drawable/ic_device"
         android:title="@string/bluetooth_title"
         app:showAsAction="always" />
     <item

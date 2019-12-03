@@ -47,13 +47,13 @@
             android:background="@color/secondaryDarkColor"
             android:orientation="horizontal">
 
-            <ImageView
+            <com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView
                 android:id="@+id/bluetoothStatusImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:gravity="center_horizontal"
-                android:src="@drawable/ic_bluetooth_disabled_24dp"
+                tools:src="@drawable/ic_bluetooth_disabled"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:gravity="center_horizontal"
-                android:src="@drawable/ic_battery_80_24dp"
+                android:src="@drawable/ic_battery_80"
                 tools:ignore="ContentDescription" />
 
             <TextView

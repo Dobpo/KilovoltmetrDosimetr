@@ -16,16 +16,16 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class BluetoothServiceImpl implements BluetoothService {
+public class BluetoothManagerImpl implements BluetoothManager {
     // Unique UUID for this application
     private static final UUID BLUETOOTH_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     // Member fields
-    private final BluetoothAdapter mAdapter;
-    private final Handler mHandler;
-    private ConnectThread mConnectThread;
-    private ConnectedThread mConnectedThread;
-    private int mState;
+    private final BluetoothAdapter adapter;
+    private final Handler handler;
+    private ConnectThread connectThread;
+    private ConnectedThread connectedThread;
+    private int state;
     private int sensorState = WAIT_FOR_ENABLE_MEASURE;
 
     // Constants that indicate the current connection state
@@ -45,84 +45,66 @@ public class BluetoothServiceImpl implements BluetoothService {
     private static final int WAIT_FOR_FRONT_CHART = 3;
     private static final int WAIT_FOR_FULL_CHART = 4;
 
-    public BluetoothServiceImpl(Context context, Handler mHandler) {
-        this.mAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.mHandler = mHandler;
+    public BluetoothManagerImpl(Context context, Handler handler) {
+        this.adapter = BluetoothAdapter.getDefaultAdapter();
+        this.handler = handler;
     }
 
-    /**
-     * Update UI title according to the current state of the connection
-     */
     private synchronized void notifyOnConnectStatusChange() {
-        mHandler.obtainMessage(Constants.MESSAGE_CONNECT_STATE_CHANGE, mState, -1).sendToTarget();
+        handler.obtainMessage(Constants.MESSAGE_CONNECT_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     private synchronized void notifyOnSensorStatusChange() {
-        mHandler.obtainMessage(Constants.MESSAGE_SENSOR_STATE_CHANGE, sensorState, -1).sendToTarget();
+        handler.obtainMessage(Constants.MESSAGE_SENSOR_STATE_CHANGE, sensorState, -1).sendToTarget();
     }
 
-    /**
-     * Start the ConnectThread to initiate a connection to a remote device.
-     *
-     * @param device The BluetoothDevice to connect
-     */
     @Override
     public synchronized void connect(BluetoothDevice device) {
-        if (mState == STATE_CONNECTING) {
-            if (mConnectThread != null) {
-                mConnectThread.cancel();
-                mConnectThread = null;
+        if (state == STATE_CONNECTING) {
+            if (connectThread != null) {
+                connectThread.cancel();
+                connectThread = null;
             }
         }
-        if (mConnectedThread != null) {
-            mConnectedThread.cancel();
-            mConnectedThread = null;
+        if (connectedThread != null) {
+            connectedThread.cancel();
+            connectedThread = null;
         }
-        mConnectThread = new ConnectThread(device);
-        mConnectThread.start();
+        connectThread = new ConnectThread(device);
+        connectThread.start();
         notifyOnConnectStatusChange();
     }
 
-    /**
-     * Start the ConnectedThread to begin managing a Bluetooth connection
-     *
-     * @param socket The BluetoothSocket on which the connection was made
-     */
     private synchronized void connected(BluetoothSocket socket) {
-        Log.d("LOG", "connected, Socket");
-
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
+        if (connectThread != null) {
+            connectThread.cancel();
+            connectThread = null;
         }
 
-        if (mConnectedThread != null) {
-            mConnectedThread.cancel();
-            mConnectedThread = null;
+        if (connectedThread != null) {
+            connectedThread.cancel();
+            connectedThread = null;
         }
 
-        mConnectedThread = new ConnectedThread(socket);
-        mConnectedThread.start();
+        connectedThread = new ConnectedThread(socket);
+        connectedThread.start();
 
         notifyOnConnectStatusChange();
     }
 
-    /**
-     * Stop all threads
-     */
     @Override
     public synchronized void stop() {
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
+        if (connectThread != null) {
+            connectThread.cancel();
+            connectThread = null;
         }
 
-        if (mConnectedThread != null) {
-            mConnectedThread.cancel();
-            mConnectedThread = null;
+        if (connectedThread != null) {
+            connectedThread.cancel();
+            connectedThread = null;
         }
 
-        mState = STATE_NONE;
+        state = STATE_NONE;
         notifyOnConnectStatusChange();
     }
 
@@ -133,46 +115,28 @@ public class BluetoothServiceImpl implements BluetoothService {
         notifyOnSensorStatusChange();
     }
 
-    /**
-     * Write to the ConnectedThread in an unsynchronized manner
-     *
-     * @param out The bytes to write
-     * @see ConnectedThread#write(byte[])
-     */
     private void write(byte[] out) {
         ConnectedThread r;
 
         synchronized (this) {
-            if (mState != STATE_CONNECTED) return;
-            r = mConnectedThread;
+            if (state != STATE_CONNECTED) return;
+            r = connectedThread;
         }
         r.write(out);
     }
 
-
-    /**
-     * Indicate that the connection attempt failed and notify the UI Activity.
-     */
     private void connectionFailed() {
-        mHandler.obtainMessage(Constants.MESSAGE_COULD_NOT_CONNECT, -1, -1).sendToTarget();
-        mState = STATE_NONE;
+        handler.obtainMessage(Constants.MESSAGE_COULD_NOT_CONNECT, -1, -1).sendToTarget();
+        state = STATE_NONE;
     }
 
-    /**
-     * Indicate that the connection was lost and notify the UI Activity.
-     */
     private void connectionLost() {
-        mState = STATE_NONE;
+        state = STATE_NONE;
         notifyOnConnectStatusChange();
     }
 
-    /**
-     * This thread runs while attempting to make an outgoing connection
-     * with a device. It runs straight through; the connection either
-     * succeeds or fails.
-     */
     private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
+        private final BluetoothSocket socket;
 
         ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
@@ -183,19 +147,19 @@ public class BluetoothServiceImpl implements BluetoothService {
             } catch (IOException e) {
                 Log.e("LOG", "Socket: create() failed", e);
             }
-            mmSocket = tmp;
-            mState = STATE_CONNECTING;
+            socket = tmp;
+            state = STATE_CONNECTING;
         }
 
         public void run() {
             setName("ConnectThread");
-            mAdapter.cancelDiscovery();
+            adapter.cancelDiscovery();
 
             try {
-                mmSocket.connect();
+                socket.connect();
             } catch (IOException e) {
                 try {
-                    mmSocket.close();
+                    socket.close();
                 } catch (IOException e2) {
                     Log.e("LOG", "unable to close() socket during connection failure", e2);
                 }
@@ -203,32 +167,28 @@ public class BluetoothServiceImpl implements BluetoothService {
                 return;
             }
 
-            synchronized (BluetoothServiceImpl.this) {
-                mConnectThread = null;
+            synchronized (BluetoothManagerImpl.this) {
+                connectThread = null;
             }
-            connected(mmSocket);
+            connected(socket);
         }
 
         void cancel() {
             try {
-                mmSocket.close();
+                socket.close();
             } catch (IOException e) {
                 Log.e("LOG", "close() of connect socket failed", e);
             }
         }
     }
 
-    /**
-     * This thread runs during a connection with a remote device.
-     * It handles all incoming and outgoing transmissions.
-     */
     private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
+        private final BluetoothSocket socket;
+        private final InputStream inStream;
+        private final OutputStream outputStream;
 
         ConnectedThread(BluetoothSocket socket) {
-            mmSocket = socket;
+            this.socket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
@@ -240,9 +200,9 @@ public class BluetoothServiceImpl implements BluetoothService {
                 Log.e("LOG", "temp sockets not created", e);
             }
 
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-            mState = STATE_CONNECTED;
+            inStream = tmpIn;
+            outputStream = tmpOut;
+            state = STATE_CONNECTED;
         }
 
         public void run() {
@@ -255,7 +215,7 @@ public class BluetoothServiceImpl implements BluetoothService {
             ChartDataModel chartDataModel = new ChartDataModel();
 
             // Keep listening to the InputStream while connected
-            while (mState == STATE_CONNECTED) {
+            while (state == STATE_CONNECTED) {
                 try {
                     switch (sensorState) {
                         case WAIT_FOR_ENABLE_MEASURE:
@@ -263,7 +223,7 @@ public class BluetoothServiceImpl implements BluetoothService {
                             break;
                         case WAIT_FOR_X_RAY:
                             do {
-                                bytes = mmInStream.read(buffer, 0, 1);
+                                bytes = inStream.read(buffer, 0, 1);
                                 count += bytes;
                             } while (count < 1);
                             count = 0;
@@ -272,7 +232,7 @@ public class BluetoothServiceImpl implements BluetoothService {
                             break;
                         case WAIT_FOR_END_X_RAY:
                             do {
-                                bytes = mmInStream.read(buffer, 0, 5);
+                                bytes = inStream.read(buffer, 0, 5);
                                 count += bytes;
                                 for (int i = 0; i < bytes; i++) {
                                     endCommandArrayList.add(buffer[i]);
@@ -286,7 +246,7 @@ public class BluetoothServiceImpl implements BluetoothService {
                             break;
                         case WAIT_FOR_FRONT_CHART:
                             do {
-                                bytes = mmInStream.read(buffer, 0, 1024);
+                                bytes = inStream.read(buffer, 0, 1024);
                                 count += bytes;
                                 for (int i = 0; i < bytes; i++) {
                                     frontDataArrayList.add(buffer[i]);
@@ -301,7 +261,7 @@ public class BluetoothServiceImpl implements BluetoothService {
                             break;
                         case WAIT_FOR_FULL_CHART:
                             do {
-                                bytes = mmInStream.read(buffer);
+                                bytes = inStream.read(buffer);
                                 count += bytes;
                                 for (int i = 0; i < bytes; i++) {
                                     fullDataArrayList.add(buffer[i]);
@@ -312,7 +272,7 @@ public class BluetoothServiceImpl implements BluetoothService {
                             Log.d("LOG", "ConnectedThread -> run : Full = " + count);
                             count = 0;
                             sensorState = WAIT_FOR_ENABLE_MEASURE;
-                            mHandler.obtainMessage(Constants.MESSAGE_MEASURE_DONE, -1, -1, chartDataModel)
+                            handler.obtainMessage(Constants.MESSAGE_MEASURE_DONE, -1, -1, chartDataModel)
                                     .sendToTarget();
                             break;
                     }
@@ -324,14 +284,9 @@ public class BluetoothServiceImpl implements BluetoothService {
             }
         }
 
-        /**
-         * Write to the connected OutStream.
-         *
-         * @param buffer The bytes to write
-         */
         void write(byte[] buffer) {
             try {
-                mmOutStream.write(buffer);
+                outputStream.write(buffer);
             } catch (IOException e) {
                 Log.e("LOG", "Exception during write", e);
             }
@@ -339,7 +294,7 @@ public class BluetoothServiceImpl implements BluetoothService {
 
         void cancel() {
             try {
-                mmSocket.close();
+                socket.close();
             } catch (IOException e) {
                 Log.e("LOG", "close() of connect socket failed", e);
             }

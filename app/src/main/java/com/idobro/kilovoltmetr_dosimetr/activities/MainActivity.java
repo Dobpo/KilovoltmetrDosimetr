@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,17 +15,16 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.lifecycle.ViewModelStore;
-import androidx.lifecycle.ViewModelStoreOwner;
 
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
-import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
-import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
-import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
-import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
+import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
+import com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView;
+import com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView.State;
+import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
+import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
+import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
+import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 
 import java.util.ArrayList;
 
@@ -38,7 +36,7 @@ public class MainActivity extends BaseActivity {
     TextView statusTextView;
 
     @BindView(R.id.bluetoothStatusImageView)
-    ImageView bluetoothStatusImageView;
+    BluetoothStatusView bluetoothStatusImageView;
 
     @BindView(R.id.contentRelativeLayout)
     RelativeLayout contentRelativeLayout;
@@ -156,19 +154,19 @@ public class MainActivity extends BaseActivity {
             switch (status) {
                 case DISCONNECT:
                     statusTextView.setText(R.string.disconnected);
-                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
+                    bluetoothStatusImageView.setState(State.DISCONNECTED);
                     Toast.makeText(MainActivity.this, "Connect with sensor was lost",
                             Toast.LENGTH_SHORT).show();
                     break;
                 case PENDING:
                     statusTextView.setText(R.string.connecting);
-                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_searching_24dp);
+                    bluetoothStatusImageView.setState(State.CONNECTING);
                     if (isMainFragmentExist())
                         getMainFragment().onConnecting();
                     break;
                 case COULD_NOT_CONNECT:
                     statusTextView.setText(R.string.disconnected);
-                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_disabled_24dp);
+                    bluetoothStatusImageView.setState(State.DISCONNECTED);
                     Toast.makeText(MainActivity.this, "Couldn't connect to sensor",
                             Toast.LENGTH_SHORT).show();
                     if (isMainFragmentExist())
@@ -176,7 +174,7 @@ public class MainActivity extends BaseActivity {
                     break;
                 case CONNECTED:
                     statusTextView.setText(R.string.connected);
-                    bluetoothStatusImageView.setImageResource(R.drawable.ic_bluetooth_connected_24dp);
+                    bluetoothStatusImageView.setState(State.CONNECTED);
                     contentRelativeLayout.setBackgroundColor(ContextCompat.getColor(getBaseContext(),
                             R.color.secondaryColor));
                     if (isMainFragmentExist())
