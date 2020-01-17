@@ -99,12 +99,13 @@ public class ChartsFragment extends BaseFragment {
 
         LineDataSet frontLineDataSet = new LineDataSet(frontValue, "DataSet Front");
 
-        frontLineDataSet.setColor(Color.parseColor("#4caf50"));
+        frontLineDataSet.setColor(Color.parseColor("#931aa8"));
         frontLineDataSet.setLineWidth(2f);
         frontLineDataSet.setDrawValues(false);
         frontLineDataSet.setDrawCircles(false);
         frontLineDataSet.setMode(LineDataSet.Mode.LINEAR);
         frontLineDataSet.setDrawFilled(false);
+        // TODO: 15.01.2020  
         //frontDataSets.add(frontLineDataSet);
 
         for (int i = 0; i < frontFirstChanelArray.length; i++) {
@@ -132,7 +133,7 @@ public class ChartsFragment extends BaseFragment {
         frontSecondLineDataSet.setDrawFilled(false);
         frontDataSets.add(frontSecondLineDataSet);
 
-        frontThirdLineDataSet.setColor(Color.parseColor("#931aa8"));
+        frontThirdLineDataSet.setColor(Color.parseColor("#4caf50"));
         frontThirdLineDataSet.setLineWidth(2f);
         frontThirdLineDataSet.setDrawValues(false);
         frontThirdLineDataSet.setDrawCircles(false);
@@ -157,12 +158,13 @@ public class ChartsFragment extends BaseFragment {
 
         LineDataSet fullLineDataSet = new LineDataSet(fullValue, "DataSet Full");
 
-        fullLineDataSet.setColor(Color.parseColor("#4caf50"));
+        fullLineDataSet.setColor(Color.parseColor("#931aa8"));
         fullLineDataSet.setLineWidth(2f);
         fullLineDataSet.setDrawValues(false);
         fullLineDataSet.setDrawCircles(false);
         fullLineDataSet.setMode(LineDataSet.Mode.LINEAR);
         fullLineDataSet.setDrawFilled(false);
+        // TODO: 15.01.2020 
         //fullDataSets.add(fullLineDataSet);
 
         for (int i = 0; i < fullFirstChanelArray.length; i++) {
@@ -170,9 +172,9 @@ public class ChartsFragment extends BaseFragment {
             fullSecondValue.add(new Entry(i, fullSecondChanelArray[i]));
             fullThirdValue.add(new Entry(i, fullThirdChanelArray[i]));
         }
-        LineDataSet fullFirstLineDataSet = new LineDataSet(fullFirstValue, "DataSet FrontFirst");
-        LineDataSet fullSecondLineDataSet = new LineDataSet(fullSecondValue, "DataSet FrontSecond");
-        LineDataSet fullThirdLineDataSet = new LineDataSet(fullThirdValue, "DataSet FrontThird");
+        LineDataSet fullFirstLineDataSet = new LineDataSet(fullFirstValue, "DataSet FullFirst");
+        LineDataSet fullSecondLineDataSet = new LineDataSet(fullSecondValue, "DataSet FullSecond");
+        LineDataSet fullThirdLineDataSet = new LineDataSet(fullThirdValue, "DataSet FullThird");
 
         fullFirstLineDataSet.setColor(Color.parseColor("#3F51B5"));
         fullFirstLineDataSet.setLineWidth(2f);
@@ -190,7 +192,7 @@ public class ChartsFragment extends BaseFragment {
         fullSecondLineDataSet.setDrawFilled(false);
         fullDataSets.add(fullSecondLineDataSet);
 
-        fullThirdLineDataSet.setColor(Color.parseColor("#931aa8"));
+        fullThirdLineDataSet.setColor(Color.parseColor("#4caf50"));
         fullThirdLineDataSet.setLineWidth(2f);
         fullThirdLineDataSet.setDrawValues(false);
         fullThirdLineDataSet.setDrawCircles(false);

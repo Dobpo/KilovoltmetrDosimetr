@@ -2,7 +2,6 @@ package com.idobro.kilovoltmetr_dosimetr.bluetooth.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Chart;
 import com.idobro.kilovoltmetr_dosimetr.utils.ByteToIntConverter;
@@ -27,16 +26,6 @@ public class ChartDataModel implements Parcelable {
     private float[] fullThirdChanel;
 
     public ChartDataModel() {
-        frontChartData = new float[5000];
-        fullChartData = new float[20000];
-
-        for (int i = 0; i < frontChartData.length; i++) {
-            frontChartData[i] = i;
-        }
-
-        for (int i = 0; i < fullChartData.length; i++) {
-            fullChartData[i] = 100;
-        }
     }
 
     public ChartDataModel(Chart chart) {
@@ -50,26 +39,28 @@ public class ChartDataModel implements Parcelable {
         frontSecondChanel = new float[frontDataArray.size() / 3];
         frontThirdChanel = new float[frontDataArray.size() / 3];
 
+
         for (int i = 0; i < (frontDataArray.size() / 3); i++) {
-            frontFirstChanel[i] = (float) ((frontDataArray.get(i) & 0xFF));
-            frontSecondChanel[i] = (float) ((frontDataArray.get(i + 1) & 0xFF));
-            frontThirdChanel[i] = (float) ((frontDataArray.get(i + 2) & 0xFF));
+            frontFirstChanel[i] = (float) ((frontDataArray.get(i * 3) & 0xFF));
+            frontSecondChanel[i] = (float) ((frontDataArray.get(i * 3 + 1) & 0xFF));
+            frontThirdChanel[i] = (float) ((frontDataArray.get(i * 3 + 2) & 0xFF));
         }
 
         fullChartData = new float[(fullDataArray.size() / 3)];
         fullFirstChanel = new float[fullDataArray.size() / 3];
         fullSecondChanel = new float[fullDataArray.size() / 3];
         fullThirdChanel = new float[fullDataArray.size() / 3];
+
         for (int i = 0; i < (fullDataArray.size() / 3); i++) {
             fullChartData[i] = (float) ((fullDataArray.get(i) & 0xFF) +
-                    (fullDataArray.get(i + 1) & 0xFF) +
-                    (fullDataArray.get(i + 2) & 0xFF)) / 3;
+                    (fullDataArray.get(i * 3 + 1) & 0xFF) +
+                    (fullDataArray.get(i * 3 + 2) & 0xFF)) / 3;
         }
 
         for (int i = 0; i < (fullDataArray.size() / 3); i++) {
-            fullFirstChanel[i] = (float) ((fullDataArray.get(i) & 0xFF));
-            fullSecondChanel[i] = (float) ((fullDataArray.get(i + 1) & 0xFF));
-            fullThirdChanel[i] = (float) ((fullDataArray.get(i + 2) & 0xFF));
+            fullFirstChanel[i] = (float) ((fullDataArray.get(i * 3) & 0xFF));
+            fullSecondChanel[i] = (float) ((fullDataArray.get(i * 3 + 1) & 0xFF));
+            fullThirdChanel[i] = (float) ((fullDataArray.get(i * 3 + 2) & 0xFF));
         }
     }
 
@@ -96,25 +87,45 @@ public class ChartDataModel implements Parcelable {
 
     public void setFrontDataArray(ArrayList<Byte> frontDataArray) {
         this.frontDataArray = frontDataArray;
-        frontChartData = new float[frontDataArray.size() / 3];
-        frontFirstChanel = new float[frontDataArray.size() / 3];
-        frontSecondChanel = new float[frontDataArray.size() / 3];
-        frontThirdChanel = new float[frontDataArray.size() / 3];
 
-        for (int i = 0; i < (frontDataArray.size() / 3); i++) {
-            frontFirstChanel[i] = (float) ((frontDataArray.get(i) & 0xFF));
-            frontSecondChanel[i] = (float) ((frontDataArray.get(i + 1) & 0xFF));
-            frontThirdChanel[i] = (float) ((frontDataArray.get(i + 2) & 0xFF));
+        int length = frontDataArray.size() / 3;
+
+        frontChartData = new float[length];
+        frontFirstChanel = new float[length];
+        frontSecondChanel = new float[length];
+        frontThirdChanel = new float[length];
+
+        for (int i = 0; i < length; i++) {
+            frontFirstChanel[i] = (float) ((frontDataArray.get(i * 3) & 0xFF));
+            frontSecondChanel[i] = (float) ((frontDataArray.get(i * 3 + 1) & 0xFF));
+            frontThirdChanel[i] = (float) ((frontDataArray.get(i * 3 + 2) & 0xFF));
+
+            frontChartData[i] = (frontFirstChanel[i] + frontSecondChanel[i] + frontThirdChanel[i]) / 3;
         }
+
+        /*for (int i = 0; i < length; i++) {
+            frontChartData[i] = (float) (((frontDataArray.get(i * 3) & 0xFF)
+                    + (frontDataArray.get(i * 3 + 1) & 0xFF)
+                    + (frontDataArray.get(i * 3 + 2) & 0xFF)) / 3);
+        }*/
     }
 
     public void setFullDataArray(ArrayList<Byte> fullDataArray) {
         this.fullDataArray = fullDataArray;
-        fullChartData = new float[(fullDataArray.size() / 3)];
-        for (int i = 0; i < (fullDataArray.size() / 3); i++) {
-            fullChartData[i] = (float) ((fullDataArray.get(i) & 0xFF) +
-                    (fullDataArray.get(i + 1) & 0xFF) +
-                    (fullDataArray.get(i + 2) & 0xFF)) / 3;
+
+        int length = fullDataArray.size() / 3;
+
+        fullChartData = new float[length];
+        fullFirstChanel = new float[length];
+        fullSecondChanel = new float[length];
+        fullThirdChanel = new float[length];
+
+        for (int i = 0; i < length; i++) {
+            fullFirstChanel[i] = (float) ((fullDataArray.get(i * 3) & 0xFF));
+            fullSecondChanel[i] = (float) ((fullDataArray.get(i * 3 + 1) & 0xFF));
+            fullThirdChanel[i] = (float) ((fullDataArray.get(i * 3 + 2) & 0xFF));
+
+            fullChartData[i] = (fullFirstChanel[i] + fullSecondChanel[i] + fullThirdChanel[i]) / 3;
         }
     }
 
