@@ -102,12 +102,6 @@ public class ChartDataModel implements Parcelable {
 
             frontChartData[i] = (frontFirstChanel[i] + frontSecondChanel[i] + frontThirdChanel[i]) / 3;
         }
-
-        /*for (int i = 0; i < length; i++) {
-            frontChartData[i] = (float) (((frontDataArray.get(i * 3) & 0xFF)
-                    + (frontDataArray.get(i * 3 + 1) & 0xFF)
-                    + (frontDataArray.get(i * 3 + 2) & 0xFF)) / 3);
-        }*/
     }
 
     public void setFullDataArray(ArrayList<Byte> fullDataArray) {
