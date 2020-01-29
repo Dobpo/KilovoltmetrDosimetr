@@ -83,6 +83,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         bluetoothManager.enableNewMeasure();
     }
 
+    public void getBatteryCharge() {
+        bluetoothManager.getBatteryCharge();
+    }
+
     public void saveChart() {
         if (chart != null) {
             databaseManager.addNewChart(chart);
@@ -90,7 +94,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         }
     }
 
-    public void showChartById(long id){
+    public void showChartById(long id) {
         databaseManager.getChartById(new ResponseCallback<Chart>() {
             @Override
             public void onSuccess(Chart response) {
@@ -157,6 +161,9 @@ public class MainActivityViewModel extends AndroidViewModel {
                             Calendar.getInstance().getTime().getTime());
                     charts.postValue(data);
                     Toast.makeText(getContext(), "Measure done", Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_BATTERY_CHARGE:
+                    Toast.makeText(getContext(), msg.arg1, Toast.LENGTH_SHORT).show();
                     break;
             }
         }

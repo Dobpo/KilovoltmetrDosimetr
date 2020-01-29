@@ -104,6 +104,9 @@ public class MainActivity extends BaseActivity {
                 chartsFragment.setArguments(bundle);
                 addFragmentToContainer(chartsFragment);
                 return true;
+            case R.id.get_battery_charge:
+                viewModel.getBatteryCharge();
+                return true;
             case R.id.save_chart:
                 viewModel.saveChart();
                 return true;

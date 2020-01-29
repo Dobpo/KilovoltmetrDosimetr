@@ -6,4 +6,5 @@ public interface Constants {
     int MESSAGE_SENSOR_STATE_CHANGE = 2;
     int MESSAGE_COULD_NOT_CONNECT = 3;
     int MESSAGE_MEASURE_DONE = 4;
+    int MESSAGE_BATTERY_CHARGE = 5;
 }

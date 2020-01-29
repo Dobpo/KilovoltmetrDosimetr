@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
+import com.idobro.kilovoltmetr_dosimetr.utils.ByteToIntConverter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +38,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
     private static final byte[] ENABLE_START = {0x01};
     private static final byte[] GET_FRONT = {0x03};
     private static final byte[] GET_FULL = {0x04};
+    private static final byte[] GET_BATTERY_CHARGE = {0x05};
 
     //Constants that indicate sensor state
     private static final int WAIT_FOR_ENABLE_MEASURE = 0;
@@ -44,6 +46,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
     public static final int WAIT_FOR_END_X_RAY = 2;
     private static final int WAIT_FOR_FRONT_CHART = 3;
     private static final int WAIT_FOR_FULL_CHART = 4;
+    private static final int WAIT_FOR_BATTERY_CHARGE = 5;
 
     public BluetoothManagerImpl(Context context, Handler handler) {
         this.adapter = BluetoothAdapter.getDefaultAdapter();
@@ -56,6 +59,10 @@ public class BluetoothManagerImpl implements BluetoothManager {
 
     private synchronized void notifyOnSensorStatusChange() {
         handler.obtainMessage(Constants.MESSAGE_SENSOR_STATE_CHANGE, sensorState, -1).sendToTarget();
+    }
+
+    private synchronized void notifyOnBatteryChargeMeassured(int batteryCharge) {
+        handler.obtainMessage(Constants.MESSAGE_BATTERY_CHARGE, batteryCharge, -1).sendToTarget();
     }
 
     @Override
@@ -113,6 +120,12 @@ public class BluetoothManagerImpl implements BluetoothManager {
         write(ENABLE_START);
         sensorState = WAIT_FOR_X_RAY;
         notifyOnSensorStatusChange();
+    }
+
+    @Override
+    public void getBatteryCharge() {
+        sensorState = WAIT_FOR_BATTERY_CHARGE;
+        write(GET_BATTERY_CHARGE);
     }
 
     private void write(byte[] out) {
@@ -219,7 +232,11 @@ public class BluetoothManagerImpl implements BluetoothManager {
                 try {
                     switch (sensorState) {
                         case WAIT_FOR_ENABLE_MEASURE:
-                            // TODO: 30.08.2019  get answer from sensor
+                            break;
+                        case WAIT_FOR_BATTERY_CHARGE:
+                            inStream.read(buffer, 0, 1);
+                            notifyOnBatteryChargeMeassured(ByteToIntConverter.getUnsignedInt(buffer[0]));
+                            sensorState = WAIT_FOR_ENABLE_MEASURE;
                             break;
                         case WAIT_FOR_X_RAY:
                             do {
@@ -237,9 +254,8 @@ public class BluetoothManagerImpl implements BluetoothManager {
                                 for (int i = 0; i < bytes; i++) {
                                     endCommandArrayList.add(buffer[i]);
                                 }
-                            } while (count < 5);
+                            } while (count < 6);
                             chartDataModel = new ChartDataModel(endCommandArrayList);
-                            Log.d("LOG", "ConnectedThread -> run : Meassure done = " + count);
                             count = 0;
                             sensorState = WAIT_FOR_FRONT_CHART;
                             write(GET_FRONT);

@@ -8,4 +8,6 @@ public interface BluetoothManager {
     void stop();
 
     void enableNewMeasure();
+
+    void getBatteryCharge();
 }
