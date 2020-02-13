@@ -31,15 +31,19 @@
         android:title="Show chart count"
         tools:ignore="HardcodedText" />
     <item
-        android:id="@+id/show_50"
-        android:title="Show 50kv chart"
+        android:id="@+id/show_6"
+        android:title="Show 6 chart"
         tools:ignore="HardcodedText" />
     <item
-        android:id="@+id/show_90"
-        android:title="Show 90kv chart"
+        android:id="@+id/show_7"
+        android:title="Show 7 chart"
         tools:ignore="HardcodedText" />
     <item
-        android:id="@+id/show_75"
-        android:title="Show 75kv chart"
+        android:id="@+id/show_8"
+        android:title="Show 8 chart"
+        tools:ignore="HardcodedText" />
+    <item
+        android:id="@+id/show_9"
+        android:title="Show 9 chart"
         tools:ignore="HardcodedText" />
 </menu>

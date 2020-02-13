@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
     @BindView(R.id.statusTextView)
@@ -40,6 +42,9 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.contentRelativeLayout)
     RelativeLayout contentRelativeLayout;
+
+    @BindView(R.id.newMeasureImageButton)
+    AppCompatImageButton newMeasureImageButton;
 
     private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -95,7 +100,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
                 return true;
             case R.id.new_measure_item:
-                viewModel.enableNewMeasure();
+                startMeasure();
                 return true;
             case R.id.show_chart:
                 Bundle bundle = new Bundle();
@@ -113,18 +118,26 @@ public class MainActivity extends BaseActivity {
             case R.id.chart_count:
                 viewModel.showSavedChartsCount();
                 return true;
-            case R.id.show_50:
-                viewModel.showChartById(3);
+            case R.id.show_6:
+                viewModel.showChartById(7);
                 return true;
-            case R.id.show_90:
-                viewModel.showChartById(4);
+            case R.id.show_7:
+                viewModel.showChartById(8);
                 return true;
-            case R.id.show_75:
-                viewModel.showChartById(5);
+            case R.id.show_8:
+                viewModel.showChartById(9);
+                return true;
+            case R.id.show_9:
+                viewModel.showChartById(10);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @OnClick(R.id.newMeasureImageButton)
+    void startMeasure() {
+        viewModel.enableNewMeasure();
     }
 
     @Override

@@ -156,7 +156,6 @@ public class BluetoothManagerImpl implements BluetoothManager {
 
             try {
                 tmp = device.createRfcommSocketToServiceRecord(BLUETOOTH_SPP);
-
             } catch (IOException e) {
                 Log.e("LOG", "Socket: create() failed", e);
             }
@@ -239,22 +238,33 @@ public class BluetoothManagerImpl implements BluetoothManager {
                             sensorState = WAIT_FOR_ENABLE_MEASURE;
                             break;
                         case WAIT_FOR_X_RAY:
+                            Log.d("LOG", "ConnectedThread -> run : send wait for x ray");
+
                             do {
                                 bytes = inStream.read(buffer, 0, 1);
                                 count += bytes;
                             } while (count < 1);
                             count = 0;
                             sensorState = WAIT_FOR_END_X_RAY;
+                            Log.d("LOG", "ConnectedThread -> run : wait for x ray" + count);
+
                             notifyOnSensorStatusChange();
                             break;
                         case WAIT_FOR_END_X_RAY:
+                            Log.d("LOG", "ConnectedThread -> run : befor get end of xray");
+
                             do {
-                                bytes = inStream.read(buffer, 0, 5);
+                                bytes = inStream.read(buffer, 0, 1024);
                                 count += bytes;
+                                Log.d("LOG", "ConnectedThread -> run : befor for -> bytes" + bytes);
                                 for (int i = 0; i < bytes; i++) {
                                     endCommandArrayList.add(buffer[i]);
                                 }
+                                Log.d("LOG", "ConnectedThread -> run : after for ->count" + count);
+
                             } while (count < 6);
+                            Log.d("LOG", "ConnectedThread -> run : End X Ray " + count);
+
                             chartDataModel = new ChartDataModel(endCommandArrayList);
                             count = 0;
                             sensorState = WAIT_FOR_FRONT_CHART;
