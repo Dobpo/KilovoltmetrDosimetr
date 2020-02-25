@@ -16,19 +16,16 @@ import androidx.lifecycle.MutableLiveData;
 import com.idobro.kilovoltmetr_dosimetr.Constants;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothManager;
 import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothManagerImpl;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.database.Database;
 import com.idobro.kilovoltmetr_dosimetr.database.DatabaseManager;
-import com.idobro.kilovoltmetr_dosimetr.database.entities.Chart;
-
-import java.util.Calendar;
+import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 
 public class MainActivityViewModel extends AndroidViewModel {
-    private MutableLiveData<ChartDataModel> charts;
+    private MutableLiveData<Graph> charts;
     private MutableLiveData<SocketStatus> connectStatus;
     private BluetoothManager bluetoothManager;
     private DatabaseManager databaseManager;
-    private Chart chart;
+    private Graph graph;
 
     public enum SocketStatus {
         DISCONNECT,
@@ -45,7 +42,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         databaseManager = new Database(getContext());
     }
 
-    public LiveData<ChartDataModel> getServerResponseLiveData() {
+    public LiveData<Graph> getServerResponseLiveData() {
         if (charts == null) {
             charts = new MutableLiveData<>();
         }
@@ -88,17 +85,17 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void saveChart() {
-        if (chart != null) {
-            databaseManager.addNewChart(chart);
+        if (graph != null) {
+            databaseManager.addNewChart(graph);
             showSavedChartsCount();
         }
     }
 
     public void showChartById(long id) {
-        databaseManager.getChartById(new ResponseCallback<Chart>() {
+        databaseManager.getChartById(new ResponseCallback<Graph>() {
             @Override
-            public void onSuccess(Chart response) {
-                charts.postValue(new ChartDataModel(response));
+            public void onSuccess(Graph response) {
+                charts.postValue(response);
             }
 
             @Override
@@ -155,11 +152,8 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
                     break;
                 case Constants.MESSAGE_MEASURE_DONE:
-                    ChartDataModel data = (ChartDataModel) msg.obj;
-                    chart = new Chart(data.getFrontByteArray(),
-                            data.getFullByteArray(),
-                            Calendar.getInstance().getTime().getTime());
-                    charts.postValue(data);
+                    graph = (Graph) msg.obj;
+                    charts.postValue(graph);
                     Toast.makeText(getContext(), "Measure done", Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_BATTERY_CHARGE:

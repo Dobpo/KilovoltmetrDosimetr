@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.bluetooth.entities;
+package com.idobro.kilovoltmetr_dosimetr.models;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Parcel;

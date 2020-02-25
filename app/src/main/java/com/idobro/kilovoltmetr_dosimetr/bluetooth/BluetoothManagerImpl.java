@@ -5,16 +5,15 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 import com.idobro.kilovoltmetr_dosimetr.Constants;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
+import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.utils.ByteToIntConverter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.nio.channels.NoConnectionPendingException;
 import java.util.UUID;
 
 public class BluetoothManagerImpl implements BluetoothManager {
@@ -157,7 +156,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
             try {
                 tmp = device.createRfcommSocketToServiceRecord(BLUETOOTH_SPP);
             } catch (IOException e) {
-                Log.e("LOG", "Socket: create() failed", e);
+                e.printStackTrace();
             }
             socket = tmp;
             state = STATE_CONNECTING;
@@ -173,7 +172,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
                 try {
                     socket.close();
                 } catch (IOException e2) {
-                    Log.e("LOG", "unable to close() socket during connection failure", e2);
+                    e.printStackTrace();
                 }
                 connectionFailed();
                 return;
@@ -189,7 +188,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
             try {
                 socket.close();
             } catch (IOException e) {
-                Log.e("LOG", "close() of connect socket failed", e);
+                e.printStackTrace();
             }
         }
     }
@@ -204,12 +203,11 @@ public class BluetoothManagerImpl implements BluetoothManager {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
-            // Get the BluetoothSocket input and output streams
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
-                Log.e("LOG", "temp sockets not created", e);
+                e.printStackTrace();
             }
 
             inStream = tmpIn;
@@ -221,12 +219,9 @@ public class BluetoothManagerImpl implements BluetoothManager {
             byte[] buffer = new byte[1024];
             int bytes;
             int count = 0;
-            ArrayList<Byte> endCommandArrayList = new ArrayList<>();
-            ArrayList<Byte> frontDataArrayList = new ArrayList<>();
-            ArrayList<Byte> fullDataArrayList = new ArrayList<>();
-            ChartDataModel chartDataModel = new ChartDataModel();
+            byte[] endCommandArray = null;
+            Graph graph = new Graph(-1);
 
-            // Keep listening to the InputStream while connected
             while (state == STATE_CONNECTED) {
                 try {
                     switch (sensorState) {
@@ -234,76 +229,86 @@ public class BluetoothManagerImpl implements BluetoothManager {
                             break;
                         case WAIT_FOR_BATTERY_CHARGE:
                             inStream.read(buffer, 0, 1);
+
                             notifyOnBatteryChargeMeassured(ByteToIntConverter.getUnsignedInt(buffer[0]));
+
                             sensorState = WAIT_FOR_ENABLE_MEASURE;
                             break;
                         case WAIT_FOR_X_RAY:
-                            Log.d("LOG", "ConnectedThread -> run : send wait for x ray");
-
                             do {
                                 bytes = inStream.read(buffer, 0, 1);
+
                                 count += bytes;
                             } while (count < 1);
+
                             count = 0;
                             sensorState = WAIT_FOR_END_X_RAY;
-                            Log.d("LOG", "ConnectedThread -> run : wait for x ray" + count);
-
                             notifyOnSensorStatusChange();
                             break;
                         case WAIT_FOR_END_X_RAY:
-                            Log.d("LOG", "ConnectedThread -> run : befor get end of xray");
+                            endCommandArray = new byte[6];
 
                             do {
                                 bytes = inStream.read(buffer, 0, 1024);
+
+                                System.arraycopy(buffer, 0, endCommandArray, count, bytes);
+
                                 count += bytes;
-                                Log.d("LOG", "ConnectedThread -> run : befor for -> bytes" + bytes);
-                                for (int i = 0; i < bytes; i++) {
-                                    endCommandArrayList.add(buffer[i]);
-                                }
-                                Log.d("LOG", "ConnectedThread -> run : after for ->count" + count);
-
                             } while (count < 6);
-                            Log.d("LOG", "ConnectedThread -> run : End X Ray " + count);
 
-                            chartDataModel = new ChartDataModel(endCommandArrayList);
                             count = 0;
+                            graph = new Graph(ByteToIntConverter.getUnsignedInt(endCommandArray[5]));
                             sensorState = WAIT_FOR_FRONT_CHART;
                             write(GET_FRONT);
                             break;
                         case WAIT_FOR_FRONT_CHART:
-                            do {
-                                bytes = inStream.read(buffer, 0, 1024);
-                                count += bytes;
-                                for (int i = 0; i < bytes; i++) {
-                                    frontDataArrayList.add(buffer[i]);
-                                }
-                            } while (count < 15000);
-                            chartDataModel.setFrontDataArray(frontDataArrayList);
-                            frontDataArrayList = new ArrayList<>();
-                            Log.d("LOG", "ConnectedThread -> run : Front = " + count);
-                            count = 0;
-                            sensorState = WAIT_FOR_FULL_CHART;
-                            write(GET_FULL);
+                            if (endCommandArray != null) {
+                                int frontDataLength = ByteToIntConverter.getUnsignedInt(endCommandArray[1], endCommandArray[2]);
+                                byte[] frontDataArray = new byte[frontDataLength];
+
+                                do {
+                                    bytes = inStream.read(buffer, 0, 1024);
+
+                                    System.arraycopy(buffer, 0, frontDataArray, count, bytes);
+
+                                    count += bytes;
+
+                                } while (count < frontDataLength);
+
+                                count = 0;
+                                graph.setFrontGraphData(frontDataArray);
+                                sensorState = WAIT_FOR_FULL_CHART;
+                                write(GET_FULL);
+                            } else {
+                                throw new NoConnectionPendingException();
+                            }
                             break;
                         case WAIT_FOR_FULL_CHART:
-                            do {
-                                bytes = inStream.read(buffer);
-                                count += bytes;
-                                for (int i = 0; i < bytes; i++) {
-                                    fullDataArrayList.add(buffer[i]);
-                                }
-                            } while (count < 60000);
-                            chartDataModel.setFullDataArray(fullDataArrayList);
-                            fullDataArrayList = new ArrayList<>();
-                            Log.d("LOG", "ConnectedThread -> run : Full = " + count);
-                            count = 0;
-                            sensorState = WAIT_FOR_ENABLE_MEASURE;
-                            handler.obtainMessage(Constants.MESSAGE_MEASURE_DONE, -1, -1, chartDataModel)
-                                    .sendToTarget();
+                            if (endCommandArray != null) {
+                                int fullDataLength = ByteToIntConverter.getUnsignedInt(endCommandArray[3], endCommandArray[4]);
+                                byte[] fullDataArray = new byte[fullDataLength];
+
+                                do {
+                                    bytes = inStream.read(buffer);
+
+                                    System.arraycopy(buffer, 0, fullDataArray, count, bytes);
+
+                                    count += bytes;
+                                } while (count < fullDataLength);
+
+                                count = 0;
+                                graph.setFullGraphData(fullDataArray);
+                                sensorState = WAIT_FOR_ENABLE_MEASURE;
+                                endCommandArray = null;
+                                handler.obtainMessage(Constants.MESSAGE_MEASURE_DONE, -1, -1, graph)
+                                        .sendToTarget();
+                            } else {
+                                throw new NoConnectionPendingException();
+                            }
                             break;
                     }
                 } catch (IOException e) {
-                    Log.e("LOG", "disconnected", e);
+                    e.printStackTrace();
                     connectionLost();
                     break;
                 }
@@ -314,7 +319,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
             try {
                 outputStream.write(buffer);
             } catch (IOException e) {
-                Log.e("LOG", "Exception during write", e);
+                e.printStackTrace();
             }
         }
 
@@ -322,7 +327,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
             try {
                 socket.close();
             } catch (IOException e) {
-                Log.e("LOG", "close() of connect socket failed", e);
+                e.printStackTrace();
             }
         }
     }

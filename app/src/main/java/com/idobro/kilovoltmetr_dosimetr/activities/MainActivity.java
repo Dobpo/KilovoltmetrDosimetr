@@ -18,13 +18,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
 import com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView;
 import com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView.State;
+import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
+import com.idobro.kilovoltmetr_dosimetr.models.BluetoothDevices;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        viewModel.getServerResponseLiveData().observe(this, new OnDataChartReceivedListener());
+        viewModel.getServerResponseLiveData().observe(this, this::showGraph);
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
     }
 
@@ -102,13 +102,6 @@ public class MainActivity extends BaseActivity {
             case R.id.new_measure_item:
                 startMeasure();
                 return true;
-            case R.id.show_chart:
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(ChartDataModel.CHARTS, new ChartDataModel());
-                Fragment chartsFragment = new ChartsFragment();
-                chartsFragment.setArguments(bundle);
-                addFragmentToContainer(chartsFragment);
-                return true;
             case R.id.get_battery_charge:
                 viewModel.getBatteryCharge();
                 return true;
@@ -118,17 +111,17 @@ public class MainActivity extends BaseActivity {
             case R.id.chart_count:
                 viewModel.showSavedChartsCount();
                 return true;
-            case R.id.show_6:
-                viewModel.showChartById(7);
+            case R.id.show_0:
+                viewModel.showChartById(2);
                 return true;
             case R.id.show_7:
-                viewModel.showChartById(8);
+                viewModel.showChartById(3);
                 return true;
             case R.id.show_8:
-                viewModel.showChartById(9);
+                viewModel.showChartById(4);
                 return true;
             case R.id.show_9:
-                viewModel.showChartById(10);
+                viewModel.showChartById(5);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,16 +144,12 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    class OnDataChartReceivedListener implements Observer<ChartDataModel> {
-
-        @Override
-        public void onChanged(ChartDataModel charts) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(ChartDataModel.CHARTS, charts);
-            Fragment chartsFragment = new ChartsFragment();
-            chartsFragment.setArguments(bundle);
-            addFragmentToContainer(chartsFragment);
-        }
+    private void showGraph(Graph graph) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Graph.GRAPH, graph);
+        Fragment chartsFragment = new ChartsFragment();
+        chartsFragment.setArguments(bundle);
+        addFragmentToContainer(chartsFragment);
     }
 
     class OnStatusChangeListener implements Observer<MainActivityViewModel.SocketStatus> {

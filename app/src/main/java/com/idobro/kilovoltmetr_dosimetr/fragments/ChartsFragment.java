@@ -15,7 +15,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.idobro.kilovoltmetr_dosimetr.R;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.ChartDataModel;
+import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 
 import java.util.ArrayList;
 
@@ -42,16 +42,16 @@ public class ChartsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         if (getArguments() != null) {
-            ChartDataModel charts = getArguments().getParcelable(ChartDataModel.CHARTS);
-            if (charts != null) {
-                frontArray = charts.getFrontChartData();
-                frontFirstChanelArray = charts.getFrontFirstChanel();
-                frontSecondChanelArray = charts.getFrontSecondChanel();
-                frontThirdChanelArray = charts.getFrontThirdChanel();
-                fullArray = charts.getFullChartData();
-                fullFirstChanelArray = charts.getFullFirstChanel();
-                fullSecondChanelArray = charts.getFullSecondChanel();
-                fullThirdChanelArray = charts.getFullThirdChanel();
+            Graph graph = getArguments().getParcelable(Graph.GRAPH);
+            if (graph != null) {
+                frontArray = graph.getFrontGraph();
+                frontFirstChanelArray = graph.getFrontFirstChanelGraph();
+                frontSecondChanelArray = graph.getFrontSecondChanelGraph();
+                frontThirdChanelArray = graph.getFrontThirdChanelGraph();
+                fullArray = graph.getFullGraph();
+                fullFirstChanelArray = graph.getFullFirstChanelGraph();
+                fullSecondChanelArray = graph.getFullSecondChanelGraph();
+                fullThirdChanelArray = graph.getFullThirdChanelGraph();
             }
         }
     }

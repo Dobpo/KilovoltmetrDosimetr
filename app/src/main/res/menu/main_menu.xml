@@ -20,30 +20,30 @@
         tools:ignore="HardcodedText"/>
     <item
         android:id="@+id/show_chart"
-        android:title="Show chart fragment"
+        android:title="Show graph fragment"
         tools:ignore="HardcodedText" />
     <item
         android:id="@+id/save_chart"
-        android:title="Save chart"
+        android:title="Save graph"
         tools:ignore="HardcodedText" />
     <item
         android:id="@+id/chart_count"
-        android:title="Show chart count"
+        android:title="Show graph count"
         tools:ignore="HardcodedText" />
     <item
-        android:id="@+id/show_6"
-        android:title="Show 6 chart"
+        android:id="@+id/show_0"
+        android:title="Show 0 graph"
         tools:ignore="HardcodedText" />
     <item
         android:id="@+id/show_7"
-        android:title="Show 7 chart"
+        android:title="Show 7 graph"
         tools:ignore="HardcodedText" />
     <item
         android:id="@+id/show_8"
-        android:title="Show 8 chart"
+        android:title="Show 8 graph"
         tools:ignore="HardcodedText" />
     <item
         android:id="@+id/show_9"
-        android:title="Show 9 chart"
+        android:title="Show 9 graph"
         tools:ignore="HardcodedText" />
 </menu>

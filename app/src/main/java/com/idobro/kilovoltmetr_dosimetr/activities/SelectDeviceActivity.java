@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
-import com.idobro.kilovoltmetr_dosimetr.bluetooth.entities.BluetoothDevices;
+import com.idobro.kilovoltmetr_dosimetr.models.BluetoothDevices;
 
 import java.util.ArrayList;
 
