@@ -112,10 +112,10 @@ public class MainActivity extends BaseActivity {
                 viewModel.showSavedChartsCount();
                 return true;
             case R.id.show_0:
-                viewModel.showChartById(2);
+                viewModel.showChartById(6);
                 return true;
             case R.id.show_7:
-                viewModel.showChartById(3);
+                viewModel.showChartById(7);
                 return true;
             case R.id.show_8:
                 viewModel.showChartById(4);
