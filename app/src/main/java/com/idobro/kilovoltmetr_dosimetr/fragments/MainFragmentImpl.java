@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
+import com.idobro.kilovoltmetr_dosimetr.base.BaseFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -24,6 +24,7 @@ import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.fragments.ChartsFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
+import com.idobro.kilovoltmetr_dosimetr.fragments.graph_dialog.GetGraphDialog;
 import com.idobro.kilovoltmetr_dosimetr.models.BluetoothDevices;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 
@@ -33,7 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraphSelectedListener {
     @BindView(R.id.statusTextView)
     TextView statusTextView;
 
@@ -112,7 +113,7 @@ public class MainActivity extends BaseActivity {
                 viewModel.showSavedChartsCount();
                 return true;
             case R.id.show_0:
-                viewModel.showChartById(6);
+                GetGraphDialog.start(this, this);
                 return true;
             case R.id.show_7:
                 viewModel.showChartById(7);
@@ -150,6 +151,11 @@ public class MainActivity extends BaseActivity {
         Fragment chartsFragment = new ChartsFragment();
         chartsFragment.setArguments(bundle);
         addFragmentToContainer(chartsFragment);
+    }
+
+    @Override
+    public void onGraphSelected(int position) {
+        Toast.makeText(this, "selected graph = " + position, Toast.LENGTH_SHORT).show();
     }
 
     class OnStatusChangeListener implements Observer<MainActivityViewModel.SocketStatus> {
