@@ -5,18 +5,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GraphsAdapter extends RecyclerView.Adapter<GraphViewHolder> {
-    private List<String> graphs = new ArrayList<>();
+    private List<GraphsDates> graphs = new ArrayList<>();
     private final OnItemClickListener onItemClickListener;
 
     GraphsAdapter(@NonNull OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    void setGraphs(@NonNull List<String> graphs) {
+    void setGraphs(@NonNull List<GraphsDates> graphs) {
         this.graphs = graphs;
         notifyDataSetChanged();
     }

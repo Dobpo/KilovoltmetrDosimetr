@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseViewHolder;
 import com.idobro.kilovoltmetr_dosimetr.fragments.graph_dialog.GraphsAdapter.OnItemClickListener;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
 import com.idobro.kilovoltmetr_dosimetr.utils.StringUtils;
 
 import butterknife.BindView;
@@ -25,10 +26,10 @@ class GraphViewHolder extends BaseViewHolder {
         return new GraphViewHolder(generateView(parent, R.layout.item_graph));
     }
 
-    void bind(String dateText, OnItemClickListener onItemClickListener) {
-        graphTextView.setText(StringUtils.isEmpty(dateText) ? StringUtils.DEFAULT_PLACEHOLDER : dateText);
+    void bind(GraphsDates dateText, OnItemClickListener onItemClickListener) {
+        graphTextView.setText(String.valueOf(dateText.getDate()));
 
         if (onItemClickListener != null)
-            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(dateText));
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(String.valueOf(dateText.getDate())));
     }
 }

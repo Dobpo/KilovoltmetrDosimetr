@@ -61,7 +61,7 @@ public class SelectDeviceActivity extends AppCompatActivity {
                 public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                     BluetoothDevice device = deviceList.get(position);
                     if (convertView == null)
-                        convertView = getLayoutInflater().inflate(R.layout.device_list_item,
+                        convertView = getLayoutInflater().inflate(R.layout.item_bt_device,
                                 parent, false);
                     TextView text1 = convertView.findViewById(R.id.nameText);
                     TextView text2 = convertView.findViewById(R.id.macText);

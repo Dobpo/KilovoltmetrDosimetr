@@ -8,6 +8,7 @@ import androidx.room.Room;
 
 import com.idobro.kilovoltmetr_dosimetr.database.dao.GraphDao;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.ResponseCallback;
 
 import java.util.List;
@@ -18,13 +19,13 @@ public class Database implements DatabaseManager {
 
     public Database(Context context) {
         AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, "kilovoltmetrDb")
-        .fallbackToDestructiveMigration().build();
+                .fallbackToDestructiveMigration().build();
         graphDao = db.graphDao();
     }
 
     @Override
     public void addNewChart(Graph graph) {
-        new Thread(()->{
+        new Thread(() -> {
             List<Graph> graphs = graphDao.getAll();
             if (graphs.size() >= 30) {
                 Graph firstEmp = graphDao.getFirstInsert();
@@ -37,7 +38,7 @@ public class Database implements DatabaseManager {
     @Override
     public void getLastChart(ResponseCallback<Graph> callback) {
         Graph graph = graphDao.getLastInsert();
-        handler.post(()->callback.onSuccess(graph));
+        handler.post(() -> callback.onSuccess(graph));
     }
 
     @Override
@@ -52,15 +53,23 @@ public class Database implements DatabaseManager {
     public void getChartRecordsNumber(ResponseCallback<Integer> callback) {
         new Thread(() -> {
             int count = graphDao.getAll().size();
-            handler.post(()->callback.onSuccess(count));
+            handler.post(() -> callback.onSuccess(count));
         }).start();
     }
 
     @Override
     public void getChartById(ResponseCallback<Graph> callback, long id) {
-        new Thread(()->{
+        new Thread(() -> {
             Graph graph = graphDao.getById(id);
-            handler.post(()-> callback.onSuccess(graph));
+            handler.post(() -> callback.onSuccess(graph));
+        }).start();
+    }
+
+    @Override
+    public void getGraphsDates(ResponseCallback<List<GraphsDates>> callback) {
+        new Thread(() -> {
+            List<GraphsDates> graphsDates = graphDao.getGraphsDate();
+            handler.post(() -> callback.onSuccess(graphsDates));
         }).start();
     }
 }

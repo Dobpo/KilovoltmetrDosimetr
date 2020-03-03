@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseDialog;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,17 @@ public class GetGraphDialog extends BaseDialog implements GraphsAdapter.OnItemCl
 
     private OnGraphSelectedListener onGraphSelectedListener;
     private GraphsAdapter graphsAdapter;
+    private List<GraphsDates> graphsDates;
 
-    private GetGraphDialog(@NonNull Context context) {
+    private GetGraphDialog(@NonNull Context context, List<GraphsDates> graphsDates, OnGraphSelectedListener onGraphSelectedListener) {
         super(context);
+        setOnGraphSelectedListener(onGraphSelectedListener);
+        setGraphsDates(graphsDates);
         show();
     }
 
-    public static void start(@NonNull Context context, OnGraphSelectedListener onGraphSelectedListener) {
-        GetGraphDialog dialog = new GetGraphDialog(context);
+    public static void start(@NonNull Context context, List<GraphsDates> graphsDates, OnGraphSelectedListener onGraphSelectedListener) {
+        GetGraphDialog dialog = new GetGraphDialog(context, graphsDates, onGraphSelectedListener);
         dialog.setOnGraphSelectedListener(onGraphSelectedListener);
         dialog.setCancelable(false);
     }
@@ -62,12 +66,8 @@ public class GetGraphDialog extends BaseDialog implements GraphsAdapter.OnItemCl
     }
 
     private void showGraphs() {
-        List<String> testGraphStrings = new ArrayList<>();
-        testGraphStrings.add("qwer");
-        testGraphStrings.add("asdf");
-        testGraphStrings.add("zxcv");
-        testGraphStrings.add("tyui");
-        graphsAdapter.setGraphs(testGraphStrings);
+        if (graphsDates != null && !graphsDates.isEmpty())
+            graphsAdapter.setGraphs(graphsDates);
     }
 
     @OnClick(R.id.closeView)
@@ -77,6 +77,10 @@ public class GetGraphDialog extends BaseDialog implements GraphsAdapter.OnItemCl
 
     private void setOnGraphSelectedListener(OnGraphSelectedListener onGraphSelectedListener) {
         this.onGraphSelectedListener = onGraphSelectedListener;
+    }
+
+    private void setGraphsDates(List<GraphsDates> graphsDates) {
+        this.graphsDates = graphsDates;
     }
 
     @Override

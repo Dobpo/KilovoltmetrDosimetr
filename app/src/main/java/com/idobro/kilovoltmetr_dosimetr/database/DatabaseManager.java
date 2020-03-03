@@ -1,7 +1,10 @@
 package com.idobro.kilovoltmetr_dosimetr.database;
 
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.ResponseCallback;
+
+import java.util.List;
 
 public interface DatabaseManager {
     void addNewChart(Graph graph);
@@ -13,4 +16,6 @@ public interface DatabaseManager {
     void getChartRecordsNumber(ResponseCallback<Integer> count);
 
     void getChartById(ResponseCallback<Graph> chart, long id);
+
+    void getGraphsDates(ResponseCallback<List<GraphsDates>> callback);
 }

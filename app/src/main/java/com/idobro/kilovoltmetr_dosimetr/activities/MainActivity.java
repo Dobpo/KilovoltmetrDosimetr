@@ -26,9 +26,11 @@ import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
 import com.idobro.kilovoltmetr_dosimetr.fragments.graph_dialog.GetGraphDialog;
 import com.idobro.kilovoltmetr_dosimetr.models.BluetoothDevices;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
 import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -113,7 +115,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
                 viewModel.showSavedChartsCount();
                 return true;
             case R.id.show_0:
-                GetGraphDialog.start(this, this);
+                viewModel.getGraphsDates().observe(this, this::showGraphSelectDialog);
                 return true;
             case R.id.show_7:
                 viewModel.showChartById(7);
@@ -127,6 +129,10 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showGraphSelectDialog(List<GraphsDates> graphsDates) {
+        GetGraphDialog.start(this, graphsDates, this);
     }
 
     @OnClick(R.id.newMeasureImageButton)

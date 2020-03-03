@@ -19,6 +19,9 @@ import com.idobro.kilovoltmetr_dosimetr.bluetooth.BluetoothManagerImpl;
 import com.idobro.kilovoltmetr_dosimetr.database.Database;
 import com.idobro.kilovoltmetr_dosimetr.database.DatabaseManager;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
+
+import java.util.List;
 
 public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<Graph> charts;
@@ -117,6 +120,23 @@ public class MainActivityViewModel extends AndroidViewModel {
 
             }
         });
+    }
+
+    public LiveData<List<GraphsDates>> getGraphsDates() {
+        MutableLiveData<List<GraphsDates>> liveData = new MutableLiveData<>();
+        databaseManager.getGraphsDates(new ResponseCallback<List<GraphsDates>>() {
+            @Override
+            public void onSuccess(List<GraphsDates> response) {
+                liveData.setValue(response);
+            }
+
+            @Override
+            public void onError(Error error) {
+                Toast.makeText(getContext(), "Не удалось загрузить графики", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return liveData;
     }
 
     @SuppressLint("HandlerLeak")

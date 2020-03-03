@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
 
 import java.util.List;
 
@@ -23,6 +24,9 @@ public interface GraphDao {
 
     @Query("SELECT * FROM Graph WHERE id = :id")
     Graph getById(long id);
+
+    @Query("SELECT id, date FROM Graph")
+    List<GraphsDates> getGraphsDate();
 
     @Insert
     long insert(Graph graph);
