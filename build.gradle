@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.6.1'
     }
 }
 
@@ -22,11 +22,11 @@ task clean(type: Delete) {
 
 ext {
     appCompatVersion = "1.1.0"
-    materialVersion = "1.2.0-alpha03"
+    materialVersion = "1.2.0-alpha05"
     constrainLayoutVersion = "2.0.0-beta4"
     gsonVersion = "2.8.5"
-    lifecycleVersion = "2.2.0-rc03"
-    roomVersion = "2.2.3"
+    lifecycleVersion = "2.2.0"
+    roomVersion = "2.2.4"
     mpChartVersion = "v3.1.0"
-    butteknifeVersion = "10.2.0"
+    butteknifeVersion = "10.2.1"
 }
