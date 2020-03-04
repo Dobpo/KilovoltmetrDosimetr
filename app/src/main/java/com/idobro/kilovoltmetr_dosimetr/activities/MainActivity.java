@@ -114,17 +114,8 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
             case R.id.chart_count:
                 viewModel.showSavedChartsCount();
                 return true;
-            case R.id.show_0:
+            case R.id.load_graph:
                 viewModel.getGraphsDates().observe(this, this::showGraphSelectDialog);
-                return true;
-            case R.id.show_7:
-                viewModel.showChartById(7);
-                return true;
-            case R.id.show_8:
-                viewModel.showChartById(4);
-                return true;
-            case R.id.show_9:
-                viewModel.showChartById(5);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -160,8 +151,8 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     }
 
     @Override
-    public void onGraphSelected(int position) {
-        Toast.makeText(this, "selected graph = " + position, Toast.LENGTH_SHORT).show();
+    public void onGraphSelected(long id) {
+        viewModel.getGraphById(id).observe(this, this::showGraph);
     }
 
     class OnStatusChangeListener implements Observer<MainActivityViewModel.SocketStatus> {

@@ -94,20 +94,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         }
     }
 
-    public void showChartById(long id) {
-        databaseManager.getChartById(new ResponseCallback<Graph>() {
-            @Override
-            public void onSuccess(Graph response) {
-                charts.postValue(response);
-            }
-
-            @Override
-            public void onError(Error error) {
-
-            }
-        }, id);
-    }
-
     public void showSavedChartsCount() {
         databaseManager.getChartRecordsNumber(new ResponseCallback<Integer>() {
             @Override
@@ -133,6 +119,23 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void onError(Error error) {
                 Toast.makeText(getContext(), "Не удалось загрузить графики", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return liveData;
+    }
+
+    public LiveData<Graph> getGraphById(long id) {
+        MutableLiveData<Graph> liveData = new MutableLiveData<>();
+        databaseManager.getGraphById(id, new ResponseCallback<Graph>() {
+            @Override
+            public void onSuccess(Graph response) {
+                liveData.setValue(response);
+            }
+
+            @Override
+            public void onError(Error error) {
+                Toast.makeText(getContext(), "Не удалось загрузить график", Toast.LENGTH_SHORT).show();
             }
         });
 

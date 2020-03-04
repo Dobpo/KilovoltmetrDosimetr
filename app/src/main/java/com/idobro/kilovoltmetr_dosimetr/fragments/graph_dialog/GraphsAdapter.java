@@ -40,6 +40,6 @@ public class GraphsAdapter extends RecyclerView.Adapter<GraphViewHolder> {
     }
 
     interface OnItemClickListener {
-        void onItemClick(String testString);
+        void onItemClick(long id);
     }
 }

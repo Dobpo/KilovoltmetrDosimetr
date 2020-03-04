@@ -58,7 +58,7 @@ public class Database implements DatabaseManager {
     }
 
     @Override
-    public void getChartById(ResponseCallback<Graph> callback, long id) {
+    public void getGraphById(long id, ResponseCallback<Graph> callback) {
         new Thread(() -> {
             Graph graph = graphDao.getById(id);
             handler.post(() -> callback.onSuccess(graph));

@@ -15,8 +15,12 @@ import com.idobro.kilovoltmetr_dosimetr.utils.StringUtils;
 import butterknife.BindView;
 
 class GraphViewHolder extends BaseViewHolder {
-    @BindView(R.id.graphTextView)
-    TextView graphTextView;
+    @BindView(R.id.idTextView)
+    TextView idTextView;
+
+    @BindView(R.id.dateTextView)
+    TextView dateTextView;
+
 
     private GraphViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -26,10 +30,12 @@ class GraphViewHolder extends BaseViewHolder {
         return new GraphViewHolder(generateView(parent, R.layout.item_graph));
     }
 
-    void bind(GraphsDates dateText, OnItemClickListener onItemClickListener) {
-        graphTextView.setText(String.valueOf(dateText.getDate()));
+    void bind(GraphsDates graphsDates, OnItemClickListener onItemClickListener) {
+        idTextView.setText(String.valueOf(graphsDates.getId()));
+        dateTextView.setText(graphsDates.getDate() == 0 ? StringUtils.DEFAULT_PLACEHOLDER
+                : String.valueOf(graphsDates.getDate()));
 
         if (onItemClickListener != null)
-            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(String.valueOf(dateText.getDate())));
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(graphsDates.getId()));
     }
 }

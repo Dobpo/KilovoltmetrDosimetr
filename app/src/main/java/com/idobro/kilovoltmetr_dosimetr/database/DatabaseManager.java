@@ -15,7 +15,7 @@ public interface DatabaseManager {
 
     void getChartRecordsNumber(ResponseCallback<Integer> count);
 
-    void getChartById(ResponseCallback<Graph> chart, long id);
+    void getGraphById(long id, ResponseCallback<Graph> chart);
 
     void getGraphsDates(ResponseCallback<List<GraphsDates>> callback);
 }

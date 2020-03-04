@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,7 +14,6 @@ import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseDialog;
 import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -62,6 +61,7 @@ public class GetGraphDialog extends BaseDialog implements GraphsAdapter.OnItemCl
 
         graphsRecyclerView.setLayoutManager(new LinearLayoutManager(getOwnerActivity()));
         graphsRecyclerView.hasFixedSize();
+        graphsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         graphsRecyclerView.setAdapter(graphsAdapter);
     }
 
@@ -84,11 +84,13 @@ public class GetGraphDialog extends BaseDialog implements GraphsAdapter.OnItemCl
     }
 
     @Override
-    public void onItemClick(String testString) {
-        Toast.makeText(getContext(), testString, Toast.LENGTH_SHORT).show();
+    public void onItemClick(long id) {
+        if (onGraphSelectedListener != null)
+            onGraphSelectedListener.onGraphSelected(id);
+        dismiss();
     }
 
     public interface OnGraphSelectedListener {
-        void onGraphSelected(int position);
+        void onGraphSelected(long id);
     }
 }
