@@ -42,6 +42,14 @@ public class Database implements DatabaseManager {
     }
 
     @Override
+    public void getAllCharts(ResponseCallback<List<Graph>> callback) {
+        new Thread(() -> {
+            List<Graph> graphs = graphDao.getAll();
+            callback.onSuccess(graphs);
+        }).start();
+    }
+
+    @Override
     public void deleteAllChart() {
         new Thread(() -> {
             List<Graph> graphs = graphDao.getAll();

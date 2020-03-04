@@ -11,6 +11,8 @@ public interface DatabaseManager {
 
     void getLastChart(ResponseCallback<Graph> graph);
 
+    void getAllCharts(ResponseCallback<List<Graph>> graphs);
+
     void deleteAllChart();
 
     void getChartRecordsNumber(ResponseCallback<Integer> count);

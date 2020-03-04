@@ -2,6 +2,7 @@ package com.idobro.kilovoltmetr_dosimetr.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.idobro.kilovoltmetr_dosimetr.R;
+import com.idobro.kilovoltmetr_dosimetr.activities.MainActivity;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseFragment;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 
@@ -38,23 +40,38 @@ public class ChartsFragment extends BaseFragment {
     private float[] fullSecondChanelArray;
     private float[] fullThirdChanelArray;
 
+    public static ChartsFragment start(Graph graph) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Graph.GRAPH, graph);
+        ChartsFragment chartsFragment = new ChartsFragment();
+        chartsFragment.setArguments(bundle);
+        return chartsFragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        if (getArguments() != null) {
-            Graph graph = getArguments().getParcelable(Graph.GRAPH);
-            if (graph != null) {
-                frontArray = graph.getFrontGraph();
-                frontFirstChanelArray = graph.getFrontFirstChanelGraph();
-                frontSecondChanelArray = graph.getFrontSecondChanelGraph();
-                frontThirdChanelArray = graph.getFrontThirdChanelGraph();
-                fullArray = graph.getFullGraph();
-                fullFirstChanelArray = graph.getFullFirstChanelGraph();
-                fullSecondChanelArray = graph.getFullSecondChanelGraph();
-                fullThirdChanelArray = graph.getFullThirdChanelGraph();
-            }
+
+        ((MainActivity) getActivity()).getGraphLiveData().observe(this, this::showGraph);
+    }
+
+    private void showGraph(Graph graph) {
+        if (graph != null) {
+            frontArray = graph.getFrontGraph();
+            frontFirstChanelArray = graph.getFrontFirstChanelGraph();
+            frontSecondChanelArray = graph.getFrontSecondChanelGraph();
+            frontThirdChanelArray = graph.getFrontThirdChanelGraph();
+            fullArray = graph.getFullGraph();
+            fullFirstChanelArray = graph.getFullFirstChanelGraph();
+            fullSecondChanelArray = graph.getFullSecondChanelGraph();
+            fullThirdChanelArray = graph.getFullThirdChanelGraph();
+
+            Log.d("LOG", "ChartsFragment -> showGraph : ");
+
         }
+
+        setDataToCharts();
     }
 
     @Nullable
@@ -70,7 +87,11 @@ public class ChartsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         initChart(frontChart);
         initChart(fullChart);
-        setDataToCharts();
+
+        if (getArguments() != null) {
+            Graph graph = getArguments().getParcelable(Graph.GRAPH);
+            showGraph(graph);
+        }
     }
 
     private void initChart(LineChart chart) {

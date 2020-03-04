@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -52,6 +54,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
+    private MutableLiveData<Graph> graphLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         ButterKnife.bind(this);
         setSupportActionBar(findViewById(R.id.toolbar));
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        graphLiveData = new MutableLiveData<>();
     }
 
     @Override
@@ -67,6 +71,8 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         super.onStart();
         viewModel.getServerResponseLiveData().observe(this, this::showGraph);
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
+
+        viewModel.showImportantData();
     }
 
     private void refreshDeviceList() {
@@ -78,6 +84,10 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
                 }
             }
         }
+    }
+
+    public LiveData<Graph> getGraphLiveData() {
+        return graphLiveData;
     }
 
     @Override
@@ -143,11 +153,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     }
 
     private void showGraph(Graph graph) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Graph.GRAPH, graph);
-        Fragment chartsFragment = new ChartsFragment();
-        chartsFragment.setArguments(bundle);
-        addFragmentToContainer(chartsFragment);
+        addFragmentToContainer(ChartsFragment.start(graph));
     }
 
     @Override
@@ -156,7 +162,6 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     }
 
     class OnStatusChangeListener implements Observer<MainActivityViewModel.SocketStatus> {
-
         @Override
         public void onChanged(MainActivityViewModel.SocketStatus status) {
             switch (status) {
