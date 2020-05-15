@@ -72,7 +72,8 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         viewModel.getServerResponseLiveData().observe(this, this::showGraph);
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
 
-        viewModel.showImportantData();
+        // TODO: 14.05.2020 не помню для чего
+        //viewModel.showImportantData();
     }
 
     private void refreshDeviceList() {

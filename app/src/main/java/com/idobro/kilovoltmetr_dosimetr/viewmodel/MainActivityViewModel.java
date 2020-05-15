@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +20,7 @@ import com.idobro.kilovoltmetr_dosimetr.database.Database;
 import com.idobro.kilovoltmetr_dosimetr.database.DatabaseManager;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
+import com.idobro.kilovoltmetr_dosimetr.utils.PrintUtil;
 
 import java.util.List;
 
@@ -31,74 +31,13 @@ public class MainActivityViewModel extends AndroidViewModel {
     private DatabaseManager databaseManager;
     private Graph graph;
 
-    // TODO: 04.03.2020
-    public void showImportantData() {
+    // TODO: 04.03.2020 нужно писать нормальные комментарии!!!!
+  /*  public void showImportantData() {
         databaseManager.getAllCharts(new ResponseCallback<List<Graph>>() {
             @Override
             public void onSuccess(List<Graph> response) {
                 for (int i = 7; i < 22; i++) {
-
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("ID = ")
-                            .append(response.get(i).getId())
-                            .append("\t")
-                            .append(" Point = 500 ")
-                            .append(response.get(i).getFrontFirstChanelGraph()[500])
-                            .append("|")
-                            .append(response.get(i).getFrontSecondChanelGraph()[500])
-                            .append("|")
-                            .append(response.get(i).getFrontThirdChanelGraph()[500])
-
-                            .append("\t")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[500] / response.get(i).getFrontFirstChanelGraph()[500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[500] / response.get(i).getFrontSecondChanelGraph()[500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontSecondChanelGraph()[500] / response.get(i).getFrontFirstChanelGraph()[500]))
-
-                            .append("\tPoint = 1500 ")
-                            .append(response.get(i).getFrontFirstChanelGraph()[1500])
-                            .append("|")
-                            .append(response.get(i).getFrontSecondChanelGraph()[1500])
-                            .append("|")
-                            .append(response.get(i).getFrontThirdChanelGraph()[1500])
-
-                            .append("\t")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[1500] / response.get(i).getFrontFirstChanelGraph()[1500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[1500] / response.get(i).getFrontSecondChanelGraph()[1500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontSecondChanelGraph()[1500] / response.get(i).getFrontFirstChanelGraph()[1500]))
-
-                            .append("\tPoint = 2500 ")
-                            .append(response.get(i).getFrontFirstChanelGraph()[2500])
-                            .append("|")
-                            .append(response.get(i).getFrontSecondChanelGraph()[2500])
-                            .append("|")
-                            .append(response.get(i).getFrontThirdChanelGraph()[2500])
-
-                            .append("\t")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[2500] / response.get(i).getFrontFirstChanelGraph()[2500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[2500] / response.get(i).getFrontSecondChanelGraph()[2500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontSecondChanelGraph()[2500] / response.get(i).getFrontFirstChanelGraph()[2500]))
-
-                            .append("\tPoint = 3500 ")
-                            .append(response.get(i).getFrontFirstChanelGraph()[3500])
-                            .append("|")
-                            .append(response.get(i).getFrontSecondChanelGraph()[3500])
-                            .append("|")
-                            .append(response.get(i).getFrontThirdChanelGraph()[3500])
-
-                            .append("\t")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[3500] / response.get(i).getFrontFirstChanelGraph()[3500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontThirdChanelGraph()[3500] / response.get(i).getFrontSecondChanelGraph()[3500]))
-                            .append("|")
-                            .append(String.format("%.2f", response.get(i).getFrontSecondChanelGraph()[3500] / response.get(i).getFrontFirstChanelGraph()[3500]));
-
-                    Log.d("LOG", stringBuilder.toString());
+                    PrintUtil.printAverageRelation(response.get(i));
                 }
             }
 
@@ -108,7 +47,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             }
         });
     }
-
+*/
     public enum SocketStatus {
         DISCONNECT,
         COULD_NOT_CONNECT,

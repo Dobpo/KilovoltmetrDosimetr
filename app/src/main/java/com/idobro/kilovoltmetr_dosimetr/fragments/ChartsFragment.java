@@ -2,7 +2,6 @@ package com.idobro.kilovoltmetr_dosimetr.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import com.idobro.kilovoltmetr_dosimetr.base.BaseFragment;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +53,7 @@ public class ChartsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        ((MainActivity) getActivity()).getGraphLiveData().observe(this, this::showGraph);
+        ((MainActivity) Objects.requireNonNull(getActivity())).getGraphLiveData().observe(this, this::showGraph);
     }
 
     private void showGraph(Graph graph) {
@@ -66,9 +66,6 @@ public class ChartsFragment extends BaseFragment {
             fullFirstChanelArray = graph.getFullFirstChanelGraph();
             fullSecondChanelArray = graph.getFullSecondChanelGraph();
             fullThirdChanelArray = graph.getFullThirdChanelGraph();
-
-            Log.d("LOG", "ChartsFragment -> showGraph : ");
-
         }
 
         setDataToCharts();
