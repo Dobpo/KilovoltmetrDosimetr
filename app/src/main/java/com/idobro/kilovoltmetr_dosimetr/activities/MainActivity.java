@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -48,8 +48,11 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     @BindView(R.id.contentRelativeLayout)
     RelativeLayout contentRelativeLayout;
 
-    @BindView(R.id.newMeasureImageButton)
-    AppCompatImageButton newMeasureImageButton;
+    @BindView(R.id.ivNewMeasure)
+    ImageView ivNewMeasure;
+
+    @BindView(R.id.ivFilter)
+    ImageView ibFilter;
 
     private MainActivityViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -137,9 +140,14 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         GetGraphDialog.start(this, graphsDates, this);
     }
 
-    @OnClick(R.id.newMeasureImageButton)
+    @OnClick(R.id.ivNewMeasure)
     void startMeasure() {
         viewModel.enableNewMeasure();
+    }
+
+    @OnClick(R.id.ivFilter)
+    void showFilter() {
+        Toast.makeText(this, "В разработке", Toast.LENGTH_SHORT).show();
     }
 
     @Override

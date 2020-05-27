@@ -258,6 +258,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
 
                             count = 0;
                             graph = new Graph(ByteToIntConverter.getUnsignedInt(endCommandArray[5]));
+                            graph.setDate(System.currentTimeMillis());
                             sensorState = WAIT_FOR_FRONT_CHART;
                             write(GET_FRONT);
                             break;

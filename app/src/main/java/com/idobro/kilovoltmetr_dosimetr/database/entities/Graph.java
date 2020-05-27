@@ -47,10 +47,6 @@ public class Graph implements Parcelable {
         this.fullGraphData = fullGraphData;
     }
 
-    public void setVirtualZero(int virtualZero) {
-        this.virtualZero = virtualZero;
-    }
-
     public void setDate(long date) {
         this.date = date;
     }
@@ -80,9 +76,9 @@ public class Graph implements Parcelable {
         float[] data = new float[length];
 
         for (int i = 0; i < length; i++) {
-            data[i] = (((frontGraphData[i * 3] & 0xFF) - virtualZero)
-                    + ((frontGraphData[i * 3 + 1] & 0xFF) - virtualZero)
-                    + ((frontGraphData[i * 3 + 2] & 0xFF) - virtualZero)) / 3;
+            data[i] = ((frontGraphData[i * 3] & 0xFF) - virtualZero);
+            //+ ((frontGraphData[i * 3 + 1] & 0xFF) - virtualZero)
+            //+ ((frontGraphData[i * 3 + 2] & 0xFF) - virtualZero)) / 3;
         }
         return data;
     }
@@ -91,14 +87,13 @@ public class Graph implements Parcelable {
         int length = frontGraphData.length / 3;
         float[] data = new float[length];
 
-        for (int i = 0; i < length - 4; i++) {
-            data[i] = (((frontGraphData[i * 3] & 0xFF)
-                    + (frontGraphData[(i + 1) * 3] & 0xFF)
-                    + (frontGraphData[(i + 2) * 3] & 0xFF)
-                    + (frontGraphData[(i + 3) * 3] & 0xFF)) / 4)
+        for (int i = 0; i < length; i++) {
+            data[i] = (frontGraphData[i * 3] & 0xFF)
+                    // + (frontGraphData[(i + 1) * 3] & 0xFF)
+                    // + (frontGraphData[(i + 2) * 3] & 0xFF)
+                    // + (frontGraphData[(i + 3) * 3] & 0xFF)) / 4)
                     - virtualZero;
         }
-
         return data;
     }
 
@@ -106,14 +101,13 @@ public class Graph implements Parcelable {
         int length = frontGraphData.length / 3;
         float[] data = new float[length];
 
-        for (int i = 0; i < length - 4; i++) {
-            data[i] = (((frontGraphData[i * 3 + 1] & 0xFF)
-                    + (frontGraphData[(i + 1) * 3 + 1] & 0xFF)
-                    + (frontGraphData[(i + 2) * 3 + 1] & 0xFF)
-                    + (frontGraphData[(i + 3) * 3 + 1] & 0xFF)) / 4)
+        for (int i = 0; i < length /*- 4*/; i++) {
+            data[i] = (frontGraphData[i * 3 + 1] & 0xFF)
+                    //+ (frontGraphData[(i + 1) * 3 + 1] & 0xFF)
+                    //+ (frontGraphData[(i + 2) * 3 + 1] & 0xFF)
+                    //+ (frontGraphData[(i + 3) * 3 + 1] & 0xFF)) / 4)
                     - virtualZero;
         }
-
         return data;
     }
 
@@ -121,14 +115,13 @@ public class Graph implements Parcelable {
         int length = frontGraphData.length / 3;
         float[] data = new float[length];
 
-        for (int i = 0; i < length - 4; i++) {
-            data[i] = (((frontGraphData[i * 3 + 2] & 0xFF)
-                    + (frontGraphData[(i + 1) * 3 + 2] & 0xFF)
-                    + (frontGraphData[(i + 2) * 3 + 2] & 0xFF)
-                    + (frontGraphData[(i + 3) * 3 + 2] & 0xFF)) / 4)
+        for (int i = 0; i < length; i++) {
+            data[i] = (frontGraphData[i * 3 + 2] & 0xFF)
+                    //+ (frontGraphData[(i + 1) * 3 + 2] & 0xFF)
+                    //+ (frontGraphData[(i + 2) * 3 + 2] & 0xFF)
+                    //+ (frontGraphData[(i + 3) * 3 + 2] & 0xFF)) / 4)
                     - virtualZero;
         }
-
         return data;
     }
 
@@ -137,9 +130,9 @@ public class Graph implements Parcelable {
         float[] data = new float[length];
 
         for (int i = 0; i < length; i++) {
-            data[i] = (((fullGraphData[i * 3] & 0xFF) - virtualZero)
-                    + ((fullGraphData[i * 3 + 1] & 0xFF) - virtualZero)
-                    + ((fullGraphData[i * 3 + 2] & 0xFF) - virtualZero)) / 3;
+            data[i] = ((fullGraphData[i * 3] & 0xFF) - virtualZero);
+            // + ((fullGraphData[i * 3 + 1] & 0xFF) - virtualZero)
+            // + ((fullGraphData[i * 3 + 2] & 0xFF) - virtualZero)) / 3;
         }
         return data;
     }
@@ -151,7 +144,6 @@ public class Graph implements Parcelable {
         for (int i = 0; i < length; i++) {
             data[i] = (fullGraphData[i * 3] & 0xFF) - virtualZero;
         }
-
         return data;
     }
 
@@ -162,7 +154,6 @@ public class Graph implements Parcelable {
         for (int i = 0; i < length; i++) {
             data[i] = (fullGraphData[i * 3 + 1] & 0xFF) - virtualZero;
         }
-
         return data;
     }
 
@@ -173,7 +164,6 @@ public class Graph implements Parcelable {
         for (int i = 0; i < length; i++) {
             data[i] = (fullGraphData[i * 3 + 2] & 0xFF) - virtualZero;
         }
-
         return data;
     }
 
