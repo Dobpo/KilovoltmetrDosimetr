@@ -2,6 +2,7 @@ package com.idobro.kilovoltmetr_dosimetr.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.activities.MainActivity;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseFragment;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
+import com.idobro.kilovoltmetr_dosimetr.utils.GraphManager;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -31,11 +33,10 @@ public class ChartsFragment extends BaseFragment {
     @BindView(R.id.fullChart)
     LineChart fullChart;
 
-    private float[] frontArray;
     private float[] frontFirstChanelArray;
     private float[] frontSecondChanelArray;
     private float[] frontThirdChanelArray;
-    private float[] fullArray;
+
     private float[] fullFirstChanelArray;
     private float[] fullSecondChanelArray;
     private float[] fullThirdChanelArray;
@@ -58,11 +59,12 @@ public class ChartsFragment extends BaseFragment {
 
     private void showGraph(Graph graph) {
         if (graph != null) {
-            frontArray = graph.getFrontGraph();
             frontFirstChanelArray = graph.getFrontFirstChanelGraph();
             frontSecondChanelArray = graph.getFrontSecondChanelGraph();
-            frontThirdChanelArray = graph.getFrontThirdChanelGraph();
-            fullArray = graph.getFullGraph();
+
+            // TODO: 28.05.2020 test
+            frontThirdChanelArray = GraphManager.smoothGraph(graph.getFrontThirdChanelGraph(), 100);
+
             fullFirstChanelArray = graph.getFullFirstChanelGraph();
             fullSecondChanelArray = graph.getFullSecondChanelGraph();
             fullThirdChanelArray = graph.getFullThirdChanelGraph();
@@ -107,58 +109,26 @@ public class ChartsFragment extends BaseFragment {
     private void setDataToCharts() {
         //Front chart
         ArrayList<ILineDataSet> frontDataSets = new ArrayList<>();
-        ArrayList<Entry> frontValue = new ArrayList<>();
         ArrayList<Entry> frontFirstValue = new ArrayList<>();
         ArrayList<Entry> frontSecondValue = new ArrayList<>();
         ArrayList<Entry> frontThirdValue = new ArrayList<>();
-
-        for (int i = 0; i < frontArray.length; i++) {
-            frontValue.add(new Entry(i, frontArray[i]));
-        }
-
-        LineDataSet frontLineDataSet = new LineDataSet(frontValue, "DataSet Front");
-
-        frontLineDataSet.setColor(Color.parseColor("#931aa8"));
-        frontLineDataSet.setLineWidth(2f);
-        frontLineDataSet.setDrawValues(false);
-        frontLineDataSet.setDrawCircles(false);
-        frontLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        frontLineDataSet.setDrawFilled(false);
-        // TODO: 15.01.2020  
-        //frontDataSets.add(frontLineDataSet);
 
         for (int i = 0; i < frontFirstChanelArray.length; i++) {
             frontFirstValue.add(new Entry(i, frontFirstChanelArray[i]));
             frontSecondValue.add(new Entry(i, frontSecondChanelArray[i]));
             frontThirdValue.add(new Entry(i, frontThirdChanelArray[i]));
         }
+
         LineDataSet frontFirstLineDataSet = new LineDataSet(frontFirstValue, "DataSet FrontFirst");
         LineDataSet frontSecondLineDataSet = new LineDataSet(frontSecondValue, "DataSet FrontSecond");
         LineDataSet frontThirdLineDataSet = new LineDataSet(frontThirdValue, "DataSet FrontThird");
 
-        frontFirstLineDataSet.setColor(Color.parseColor("#3F51B5"));
-        frontFirstLineDataSet.setLineWidth(2f);
-        frontFirstLineDataSet.setDrawValues(false);
-        frontFirstLineDataSet.setDrawCircles(false);
-        frontFirstLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        frontFirstLineDataSet.setDrawFilled(false);
-        frontDataSets.add(frontFirstLineDataSet);
-
-        frontSecondLineDataSet.setColor(Color.parseColor("#cc3333"));
-        frontSecondLineDataSet.setLineWidth(2f);
-        frontSecondLineDataSet.setDrawValues(false);
-        frontSecondLineDataSet.setDrawCircles(false);
-        frontSecondLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        frontSecondLineDataSet.setDrawFilled(false);
-        frontDataSets.add(frontSecondLineDataSet);
-
-        frontThirdLineDataSet.setColor(Color.parseColor("#4caf50"));
-        frontThirdLineDataSet.setLineWidth(2f);
-        frontThirdLineDataSet.setDrawValues(false);
-        frontThirdLineDataSet.setDrawCircles(false);
-        frontThirdLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        frontThirdLineDataSet.setDrawFilled(false);
-        frontDataSets.add(frontThirdLineDataSet);
+        //Blue - first from bottom
+        customizeLineForChart(frontDataSets, frontFirstLineDataSet, "#3F51B5");
+        //Red - second from bottom
+        customizeLineForChart(frontDataSets, frontSecondLineDataSet, "#cc3333");
+        //Green - third from bottom
+        customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#4caf50");
 
         frontChart.setData(new LineData(frontDataSets));
         frontChart.getLegend().setEnabled(false);
@@ -166,25 +136,9 @@ public class ChartsFragment extends BaseFragment {
 
         //Full chart
         ArrayList<ILineDataSet> fullDataSets = new ArrayList<>();
-        ArrayList<Entry> fullValue = new ArrayList<>();
         ArrayList<Entry> fullFirstValue = new ArrayList<>();
         ArrayList<Entry> fullSecondValue = new ArrayList<>();
         ArrayList<Entry> fullThirdValue = new ArrayList<>();
-
-        for (int i = 0; i < fullArray.length; i++) {
-            fullValue.add(new Entry(i, fullArray[i]));
-        }
-
-        LineDataSet fullLineDataSet = new LineDataSet(fullValue, "DataSet Full");
-
-        fullLineDataSet.setColor(Color.parseColor("#931aa8"));
-        fullLineDataSet.setLineWidth(2f);
-        fullLineDataSet.setDrawValues(false);
-        fullLineDataSet.setDrawCircles(false);
-        fullLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        fullLineDataSet.setDrawFilled(false);
-        // TODO: 15.01.2020 
-        //fullDataSets.add(fullLineDataSet);
 
         for (int i = 0; i < fullFirstChanelArray.length; i++) {
             fullFirstValue.add(new Entry(i, fullFirstChanelArray[i]));
@@ -195,32 +149,25 @@ public class ChartsFragment extends BaseFragment {
         LineDataSet fullSecondLineDataSet = new LineDataSet(fullSecondValue, "DataSet FullSecond");
         LineDataSet fullThirdLineDataSet = new LineDataSet(fullThirdValue, "DataSet FullThird");
 
-        fullFirstLineDataSet.setColor(Color.parseColor("#3F51B5"));
-        fullFirstLineDataSet.setLineWidth(2f);
-        fullFirstLineDataSet.setDrawValues(false);
-        fullFirstLineDataSet.setDrawCircles(false);
-        fullFirstLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        fullFirstLineDataSet.setDrawFilled(false);
-        fullDataSets.add(fullFirstLineDataSet);
-
-        fullSecondLineDataSet.setColor(Color.parseColor("#cc3333"));
-        fullSecondLineDataSet.setLineWidth(2f);
-        fullSecondLineDataSet.setDrawValues(false);
-        fullSecondLineDataSet.setDrawCircles(false);
-        fullSecondLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        fullSecondLineDataSet.setDrawFilled(false);
-        fullDataSets.add(fullSecondLineDataSet);
-
-        fullThirdLineDataSet.setColor(Color.parseColor("#4caf50"));
-        fullThirdLineDataSet.setLineWidth(2f);
-        fullThirdLineDataSet.setDrawValues(false);
-        fullThirdLineDataSet.setDrawCircles(false);
-        fullThirdLineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        fullThirdLineDataSet.setDrawFilled(false);
-        fullDataSets.add(fullThirdLineDataSet);
+        //Blue
+        customizeLineForChart(fullDataSets, fullFirstLineDataSet, "#3F51B5");
+        //Red
+        customizeLineForChart(fullDataSets, fullSecondLineDataSet, "#cc3333");
+        //Green
+        customizeLineForChart(fullDataSets, fullThirdLineDataSet, "#4caf50");
 
         fullChart.setData(new LineData(fullDataSets));
         fullChart.getLegend().setEnabled(false);
         fullChart.invalidate();
+    }
+
+    private void customizeLineForChart(ArrayList<ILineDataSet> dataSets, LineDataSet lineDataSet, String color) {
+        lineDataSet.setColor(Color.parseColor(color));
+        lineDataSet.setLineWidth(2f);
+        lineDataSet.setDrawValues(false);
+        lineDataSet.setDrawCircles(false);
+        lineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        lineDataSet.setDrawFilled(false);
+        dataSets.add(lineDataSet);
     }
 }
