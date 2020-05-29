@@ -16,4 +16,5 @@
     <string name="waiting_for_xray">Waiting for X Ray</string>
     <string name="new_measure">New measure</string>
     <string name="select_graph">Select graph</string>
+    <string name="average_value">"Ср. знач. = "</string>
 </resources>

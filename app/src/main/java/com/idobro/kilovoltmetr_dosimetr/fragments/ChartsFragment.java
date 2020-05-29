@@ -2,7 +2,6 @@ package com.idobro.kilovoltmetr_dosimetr.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.activities.MainActivity;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseFragment;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
-import com.idobro.kilovoltmetr_dosimetr.utils.GraphManager;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -61,9 +59,7 @@ public class ChartsFragment extends BaseFragment {
         if (graph != null) {
             frontFirstChanelArray = graph.getFrontFirstChanelGraph();
             frontSecondChanelArray = graph.getFrontSecondChanelGraph();
-
-            // TODO: 28.05.2020 test
-            frontThirdChanelArray = GraphManager.smoothGraph(graph.getFrontThirdChanelGraph(), 100);
+            frontThirdChanelArray = graph.getFrontThirdChanelGraph();
 
             fullFirstChanelArray = graph.getFullFirstChanelGraph();
             fullSecondChanelArray = graph.getFullSecondChanelGraph();

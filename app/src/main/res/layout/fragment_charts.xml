@@ -17,6 +17,89 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/frontChart"
+        app:layout_constraintEnd_toEndOf="@+id/frontChart">
+
+        <View
+            android:id="@+id/vAverageFirst"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@android:color/holo_blue_bright"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvAverageFirst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/average_value"
+            app:layout_constraintBottom_toBottomOf="@+id/vAverageFirst"
+            app:layout_constraintStart_toEndOf="@+id/vAverageFirst"
+            app:layout_constraintTop_toTopOf="@+id/vAverageFirst" />
+
+        <View
+            android:id="@+id/vAverageSecond"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/holo_blue_bright"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vAverageFirst" />
+
+        <TextView
+            android:id="@+id/tvAverageSecond"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/average_value"
+            app:layout_constraintBottom_toBottomOf="@+id/vAverageSecond"
+            app:layout_constraintStart_toEndOf="@+id/vAverageSecond"
+            app:layout_constraintTop_toTopOf="@+id/vAverageSecond" />
+
+        <View
+            android:id="@+id/vStandDevThirdToFirst"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/holo_blue_bright"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vAverageSecond" />
+
+        <TextView
+            android:id="@+id/tvStandDevThirdToFirst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/average_value"
+            app:layout_constraintBottom_toBottomOf="@+id/vAverageThird"
+            app:layout_constraintStart_toEndOf="@+id/vAverageThird"
+            app:layout_constraintTop_toTopOf="@+id/vAverageThird" />
+
+        <View
+            android:id="@+id/vAverageThird"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/holo_blue_bright"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vAverageSecond" />
+
+        <TextView
+            android:id="@+id/tvAverageThird"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/average_value"
+            app:layout_constraintBottom_toBottomOf="@+id/vAverageThird"
+            app:layout_constraintStart_toEndOf="@+id/vAverageThird"
+            app:layout_constraintTop_toTopOf="@+id/vAverageThird" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/fullChart"
         android:layout_width="match_parent"
