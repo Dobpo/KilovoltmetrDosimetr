@@ -17,4 +17,5 @@
     <string name="new_measure">New measure</string>
     <string name="select_graph">Select graph</string>
     <string name="average_value">"Ср. знач. = "</string>
+    <string name="standard_deviation_value">Ср. кв. откл. = "</string>
 </resources>

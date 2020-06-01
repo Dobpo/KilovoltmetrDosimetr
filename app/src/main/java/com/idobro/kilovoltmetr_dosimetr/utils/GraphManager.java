@@ -22,7 +22,7 @@ public final class GraphManager {
     /**
      * Среднее значение графика
      */
-    private static float getAverage(float[] array) {
+    public static float getAverage(float[] array) {
         float result = 0;
         for (float point : array) {
             result += point;

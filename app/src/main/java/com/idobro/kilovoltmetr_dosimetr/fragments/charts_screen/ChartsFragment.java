@@ -1,4 +1,4 @@
-package com.idobro.kilovoltmetr_dosimetr.fragments;
+package com.idobro.kilovoltmetr_dosimetr.fragments.charts_screen;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -18,6 +20,7 @@ import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.activities.MainActivity;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseFragment;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
+import com.idobro.kilovoltmetr_dosimetr.utils.GraphManager;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -28,8 +31,14 @@ import butterknife.ButterKnife;
 public class ChartsFragment extends BaseFragment {
     @BindView(R.id.frontChart)
     LineChart frontChart;
+
     @BindView(R.id.fullChart)
     LineChart fullChart;
+
+    @BindView(R.id.rvFrontInfo)
+    RecyclerView rvFrontInfo;
+
+    private ChartInfoAdapter infoAdapter;
 
     private float[] frontFirstChanelArray;
     private float[] frontSecondChanelArray;
@@ -80,6 +89,14 @@ public class ChartsFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (infoAdapter == null) {
+            infoAdapter = new ChartInfoAdapter();
+        }
+
+        rvFrontInfo.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvFrontInfo.setHasFixedSize(true);
+        rvFrontInfo.setAdapter(infoAdapter);
+
         initChart(frontChart);
         initChart(fullChart);
 
@@ -105,26 +122,64 @@ public class ChartsFragment extends BaseFragment {
     private void setDataToCharts() {
         //Front chart
         ArrayList<ILineDataSet> frontDataSets = new ArrayList<>();
-        ArrayList<Entry> frontFirstValue = new ArrayList<>();
-        ArrayList<Entry> frontSecondValue = new ArrayList<>();
-        ArrayList<Entry> frontThirdValue = new ArrayList<>();
-
-        for (int i = 0; i < frontFirstChanelArray.length; i++) {
-            frontFirstValue.add(new Entry(i, frontFirstChanelArray[i]));
-            frontSecondValue.add(new Entry(i, frontSecondChanelArray[i]));
-            frontThirdValue.add(new Entry(i, frontThirdChanelArray[i]));
-        }
-
-        LineDataSet frontFirstLineDataSet = new LineDataSet(frontFirstValue, "DataSet FrontFirst");
-        LineDataSet frontSecondLineDataSet = new LineDataSet(frontSecondValue, "DataSet FrontSecond");
-        LineDataSet frontThirdLineDataSet = new LineDataSet(frontThirdValue, "DataSet FrontThird");
+        ArrayList<InfoItem> infoItems = new ArrayList<>();
 
         //Blue - first from bottom
-        customizeLineForChart(frontDataSets, frontFirstLineDataSet, "#3F51B5");
+        // FIXME: 01.06.2020
+        if (true) {
+            ArrayList<Entry> frontFirstValue = new ArrayList<>();
+
+            for (int i = 0; i < frontFirstChanelArray.length; i++) {
+                frontFirstValue.add(new Entry(i, frontFirstChanelArray[i]));
+            }
+
+            LineDataSet frontFirstLineDataSet = new LineDataSet(frontFirstValue, "DataSet FrontFirst");
+
+            customizeLineForChart(frontDataSets, frontFirstLineDataSet, "#3F51B5");
+            infoItems.add(new InfoItem("#3F51B5", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(frontFirstChanelArray))));
+            infoItems.add(new InfoItem("#3F51B5", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(frontFirstChanelArray))));
+        }
+
         //Red - second from bottom
-        customizeLineForChart(frontDataSets, frontSecondLineDataSet, "#cc3333");
+        // FIXME: 01.06.2020
+        if (true) {
+            ArrayList<Entry> frontSecondValue = new ArrayList<>();
+
+            for (int i = 0; i < frontFirstChanelArray.length; i++) {
+                frontSecondValue.add(new Entry(i, frontSecondChanelArray[i]));
+            }
+
+            LineDataSet frontSecondLineDataSet = new LineDataSet(frontSecondValue, "DataSet FrontSecond");
+
+            customizeLineForChart(frontDataSets, frontSecondLineDataSet, "#cc3333");
+            infoItems.add(new InfoItem("#cc3333", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(frontSecondChanelArray))));
+            infoItems.add(new InfoItem("#cc3333", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(frontSecondChanelArray))));
+        }
+
         //Green - third from bottom
-        customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#4caf50");
+        // FIXME: 01.06.2020
+        if (true) {
+            ArrayList<Entry> frontThirdValue = new ArrayList<>();
+
+            for (int i = 0; i < frontFirstChanelArray.length; i++) {
+                frontThirdValue.add(new Entry(i, frontThirdChanelArray[i]));
+            }
+
+            LineDataSet frontThirdLineDataSet = new LineDataSet(frontThirdValue, "DataSet FrontThird");
+
+            customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#4caf50");
+            infoItems.add(new InfoItem("#4caf50", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(frontThirdChanelArray))));
+            infoItems.add(new InfoItem("#4caf50", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(frontThirdChanelArray))));
+        }
+
+        if (!infoItems.isEmpty())
+            infoAdapter.setItems(infoItems);
 
         frontChart.setData(new LineData(frontDataSets));
         frontChart.getLegend().setEnabled(false);
