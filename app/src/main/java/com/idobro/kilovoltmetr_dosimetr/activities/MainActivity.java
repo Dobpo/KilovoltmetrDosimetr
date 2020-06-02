@@ -23,9 +23,9 @@ import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView;
 import com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView.State;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
-import com.idobro.kilovoltmetr_dosimetr.fragments.charts_screen.ChartsFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
+import com.idobro.kilovoltmetr_dosimetr.fragments.charts_screen.ChartsFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.graph_dialog.GetGraphDialog;
 import com.idobro.kilovoltmetr_dosimetr.models.BluetoothDevices;
 import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
@@ -74,9 +74,10 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         super.onStart();
         viewModel.getServerResponseLiveData().observe(this, this::showGraph);
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
+    }
 
-        // TODO: 14.05.2020 не помню для чего
-        //viewModel.showImportantData();
+    public MainActivityViewModel getViewModel() {
+        return viewModel;
     }
 
     private void refreshDeviceList() {

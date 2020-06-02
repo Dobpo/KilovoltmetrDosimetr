@@ -20,7 +20,9 @@ import com.idobro.kilovoltmetr_dosimetr.database.Database;
 import com.idobro.kilovoltmetr_dosimetr.database.DatabaseManager;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
-import com.idobro.kilovoltmetr_dosimetr.utils.PrintUtil;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityFilterModel;
+import com.idobro.kilovoltmetr_dosimetr.preferences.SharedPreferenceManager;
+import com.idobro.kilovoltmetr_dosimetr.utils.GraphsVisibilityMapper;
 
 import java.util.List;
 
@@ -29,25 +31,9 @@ public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<SocketStatus> connectStatus;
     private BluetoothManager bluetoothManager;
     private DatabaseManager databaseManager;
+    private SharedPreferenceManager sharedPreferenceManager;
     private Graph graph;
 
-    // TODO: 04.03.2020 нужно писать нормальные комментарии!!!!
-  /*  public void showImportantData() {
-        databaseManager.getAllCharts(new ResponseCallback<List<Graph>>() {
-            @Override
-            public void onSuccess(List<Graph> response) {
-                for (int i = 7; i < 22; i++) {
-                    PrintUtil.printAverageRelation(response.get(i));
-                }
-            }
-
-            @Override
-            public void onError(Error error) {
-
-            }
-        });
-    }
-*/
     public enum SocketStatus {
         DISCONNECT,
         COULD_NOT_CONNECT,
@@ -60,6 +46,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
         bluetoothManager = new BluetoothManagerImpl(getContext(), mHandler);
+        sharedPreferenceManager = new SharedPreferenceManager(getContext());
         databaseManager = new Database(getContext());
     }
 
@@ -158,6 +145,14 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
 
         return liveData;
+    }
+
+    public void saveVisibility(GraphsVisibilityFilterModel model) {
+        sharedPreferenceManager.saveGraphVisibility(GraphsVisibilityMapper.toString(model));
+    }
+
+    public GraphsVisibilityFilterModel getGraphsVisibility() {
+        return GraphsVisibilityMapper.toVisibilityModel(sharedPreferenceManager.getGraphVisibility());
     }
 
     @SuppressLint("HandlerLeak")
