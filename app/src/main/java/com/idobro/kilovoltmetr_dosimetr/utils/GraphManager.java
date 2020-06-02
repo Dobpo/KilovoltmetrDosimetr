@@ -10,10 +10,15 @@ public final class GraphManager {
         if (firstArray.length != secondArray.length)
             throw new IllegalArgumentException("Different arrays size");
 
+        float secondAverage = getAverage(secondArray);
+
         float[] resultArray = new float[firstArray.length];
 
         for (int i = 0; i < firstArray.length; i++) {
-            resultArray[i] = firstArray[i] / secondArray[i];
+            if (secondArray[i] == 0)
+                resultArray[i] = firstArray[i] / secondAverage;
+            else
+                resultArray[i] = firstArray[i] / secondArray[i];
         }
 
         return resultArray;

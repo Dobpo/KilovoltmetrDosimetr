@@ -124,26 +124,24 @@ public class ChartsFragment extends BaseFragment {
         ArrayList<ILineDataSet> frontDataSets = new ArrayList<>();
         ArrayList<InfoItem> infoItems = new ArrayList<>();
 
-        //Blue - first from bottom
-        // FIXME: 01.06.2020
+        /* График 3-го канала (зеленый),код - #4caf50*/
         if (true) {
-            ArrayList<Entry> frontFirstValue = new ArrayList<>();
+            ArrayList<Entry> frontThirdValue = new ArrayList<>();
 
             for (int i = 0; i < frontFirstChanelArray.length; i++) {
-                frontFirstValue.add(new Entry(i, frontFirstChanelArray[i]));
+                frontThirdValue.add(new Entry(i, frontThirdChanelArray[i]));
             }
 
-            LineDataSet frontFirstLineDataSet = new LineDataSet(frontFirstValue, "DataSet FrontFirst");
+            LineDataSet frontThirdLineDataSet = new LineDataSet(frontThirdValue, "DataSet FrontThird");
 
-            customizeLineForChart(frontDataSets, frontFirstLineDataSet, "#3F51B5");
-            infoItems.add(new InfoItem("#3F51B5", String.format(getString(R.string.average_value)
-                    + "%.3f", GraphManager.getAverage(frontFirstChanelArray))));
-            infoItems.add(new InfoItem("#3F51B5", String.format(getString(R.string.standard_deviation_value)
-                    + "%.3f", GraphManager.getStandardDeviation(frontFirstChanelArray))));
+            customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#4caf50");
+            infoItems.add(new InfoItem("#4caf50", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(frontThirdChanelArray))));
+            infoItems.add(new InfoItem("#4caf50", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(frontThirdChanelArray))));
         }
 
-        //Red - second from bottom
-        // FIXME: 01.06.2020
+        /* График 2-го канала (красный),код - #cc3333*/
         if (true) {
             ArrayList<Entry> frontSecondValue = new ArrayList<>();
 
@@ -160,22 +158,81 @@ public class ChartsFragment extends BaseFragment {
                     + "%.3f", GraphManager.getStandardDeviation(frontSecondChanelArray))));
         }
 
-        //Green - third from bottom
-        // FIXME: 01.06.2020
-        if (true) {
-            ArrayList<Entry> frontThirdValue = new ArrayList<>();
+        /* График 1-го канала (синий),код - #3F51B5*/
+        if (false) {
+            ArrayList<Entry> frontFirstValue = new ArrayList<>();
 
             for (int i = 0; i < frontFirstChanelArray.length; i++) {
-                frontThirdValue.add(new Entry(i, frontThirdChanelArray[i]));
+                frontFirstValue.add(new Entry(i, frontFirstChanelArray[i]));
             }
 
-            LineDataSet frontThirdLineDataSet = new LineDataSet(frontThirdValue, "DataSet FrontThird");
+            LineDataSet frontFirstLineDataSet = new LineDataSet(frontFirstValue, "DataSet FrontFirst");
 
-            customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#4caf50");
-            infoItems.add(new InfoItem("#4caf50", String.format(getString(R.string.average_value)
-                    + "%.3f", GraphManager.getAverage(frontThirdChanelArray))));
-            infoItems.add(new InfoItem("#4caf50", String.format(getString(R.string.standard_deviation_value)
-                    + "%.3f", GraphManager.getStandardDeviation(frontThirdChanelArray))));
+            customizeLineForChart(frontDataSets, frontFirstLineDataSet, "#3F51B5");
+            infoItems.add(new InfoItem("#3F51B5", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(frontFirstChanelArray))));
+            infoItems.add(new InfoItem("#3F51B5", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(frontFirstChanelArray))));
+        }
+
+        /* График отношения 3-го канала к 1-ому (зеленого к синему),
+         * резкльтирующий график бирюзовый, код - #468083*/
+        if (false) {
+            ArrayList<Entry> thirdToFirstValue = new ArrayList<>();
+
+            float[] thirdToFirstArray = GraphManager.getRelationGraph(frontThirdChanelArray, frontFirstChanelArray);
+
+            for (int i = 0; i < thirdToFirstArray.length; i++) {
+                thirdToFirstValue.add(new Entry(i, thirdToFirstArray[i]));
+            }
+
+            LineDataSet frontThirdLineDataSet = new LineDataSet(thirdToFirstValue, "DataSet");
+
+            customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#468083");
+            infoItems.add(new InfoItem("#468083", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(thirdToFirstArray))));
+            infoItems.add(new InfoItem("#468083", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(thirdToFirstArray))));
+        }
+
+        /* График отношения 2-го канала к 1-ому (красного к синему),
+         * резкльтирующий график коричневый, код - #8C7142*/
+        if (false) {
+            ArrayList<Entry> secondToFirstValue = new ArrayList<>();
+
+            float[] secondToFirstArray = GraphManager.getRelationGraph(frontSecondChanelArray, frontFirstChanelArray);
+
+            for (int i = 0; i < secondToFirstArray.length; i++) {
+                secondToFirstValue.add(new Entry(i, secondToFirstArray[i]));
+            }
+
+            LineDataSet frontThirdLineDataSet = new LineDataSet(secondToFirstValue, "DataSet");
+
+            customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#8C7142");
+            infoItems.add(new InfoItem("#8C7142", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(secondToFirstArray))));
+            infoItems.add(new InfoItem("#8C7142", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(secondToFirstArray))));
+        }
+
+        /* График отношения 3-го канала к 2-ому (зеленого к красному),
+         * резкльтирующий график сереневый, код - #864274*/
+        if (true) {
+            ArrayList<Entry>  thirdToSecondValue = new ArrayList<>();
+
+            float[] thirdToSecondArray = GraphManager.getRelationGraph(frontSecondChanelArray, frontFirstChanelArray);
+
+            for (int i = 0; i < thirdToSecondArray.length; i++) {
+                thirdToSecondValue.add(new Entry(i, thirdToSecondArray[i]));
+            }
+
+            LineDataSet frontThirdLineDataSet = new LineDataSet(thirdToSecondValue, "DataSet");
+
+            customizeLineForChart(frontDataSets, frontThirdLineDataSet, "#864274");
+            infoItems.add(new InfoItem("#864274", String.format(getString(R.string.average_value)
+                    + "%.3f", GraphManager.getAverage(thirdToSecondArray))));
+            infoItems.add(new InfoItem("#864274", String.format(getString(R.string.standard_deviation_value)
+                    + "%.3f", GraphManager.getStandardDeviation(thirdToSecondArray))));
         }
 
         if (!infoItems.isEmpty())
