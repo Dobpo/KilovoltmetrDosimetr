@@ -1,28 +1,47 @@
 package com.idobro.kilovoltmetr_dosimetr.fragments.filter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseDialog;
-import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityFilterModel;
+import com.idobro.kilovoltmetr_dosimetr.fragments.filter.FilterAdapter.OnGraphVisibilityChangeListener;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityModel;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class FilterDialog extends BaseDialog {
-    private GraphsVisibilityFilterModel filter;
+public class FilterDialog extends BaseDialog implements OnGraphVisibilityChangeListener {
+    @BindView(R.id.vClose)
+    View vClose;
 
-    private FilterDialog(@NonNull Context context) {
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+
+    @BindView(R.id.btnSubmit)
+    Button buttonSubmit;
+
+    private GraphsVisibilityModel visibilityModel;
+    private SubmitGraphVisibilityListener submitListener;
+    private FilterAdapter adapter;
+
+    private FilterDialog(@NonNull Context context, GraphsVisibilityModel visibilityModel, SubmitGraphVisibilityListener submitListener) {
         super(context);
+        this.submitListener = submitListener;
+        this.visibilityModel = visibilityModel;
+        show();
     }
 
-    public static void start(@NonNull Context context, GraphsVisibilityFilterModel filter) {
-        Intent starter = new Intent(context, FilterDialog.class);
-        //starter.putExtra();
-        context.startActivity(starter);
+    public static void start(@NonNull Context context, GraphsVisibilityModel visibilityModel, SubmitGraphVisibilityListener submitListener) {
+        FilterDialog dialog = new FilterDialog(context, visibilityModel, submitListener);
+        dialog.setCancelable(false);
     }
 
     @Override
@@ -32,9 +51,35 @@ public class FilterDialog extends BaseDialog {
         ButterKnife.bind(this);
 
         initViews();
+        showVisibilities();
     }
 
     private void initViews() {
-        // TODO: 02.06.2020
+        if (adapter == null)
+            adapter = new FilterAdapter(this);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getOwnerActivity()));
+        recyclerView.hasFixedSize();
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void showVisibilities() {
+        adapter.setItems(visibilityModel.getItems());
+    }
+
+    @OnClick(R.id.vClose)
+    void close() {
+        dismiss();
+    }
+
+    @OnClick(R.id.btnSubmit)
+    void submit() {
+        submitListener.onSubmit(visibilityModel);
+        dismiss();
+    }
+
+    @Override
+    public void onCheckChanged(boolean isChecked, int position) {
+        visibilityModel.getItems().get(position).setChecked(isChecked);
     }
 }

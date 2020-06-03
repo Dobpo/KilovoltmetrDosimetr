@@ -18,5 +18,6 @@
     <string name="select_graph">Select graph</string>
     <string name="average_value">"Ср. знач. = "</string>
     <string name="standard_deviation_value">Ср. кв. откл. = "</string>
-    <string name="graph_visibility_filter">Graph visibility filter</string>
+    <string name="graphs_visibility_filter">Graphs visibility filter</string>
+    <string name="submit">Submit</string>
 </resources>

@@ -20,13 +20,13 @@ import com.idobro.kilovoltmetr_dosimetr.database.Database;
 import com.idobro.kilovoltmetr_dosimetr.database.DatabaseManager;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
-import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityFilterModel;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityModel;
 import com.idobro.kilovoltmetr_dosimetr.preferences.SharedPreferenceManager;
 import com.idobro.kilovoltmetr_dosimetr.utils.GraphsVisibilityMapper;
 
 import java.util.List;
 
-public class MainActivityViewModel extends AndroidViewModel {
+public class MainViewModel extends AndroidViewModel {
     private MutableLiveData<Graph> charts;
     private MutableLiveData<SocketStatus> connectStatus;
     private BluetoothManager bluetoothManager;
@@ -43,7 +43,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         LOAD_CHART_DATA
     }
 
-    public MainActivityViewModel(@NonNull Application application) {
+    public MainViewModel(@NonNull Application application) {
         super(application);
         bluetoothManager = new BluetoothManagerImpl(getContext(), mHandler);
         sharedPreferenceManager = new SharedPreferenceManager(getContext());
@@ -147,11 +147,11 @@ public class MainActivityViewModel extends AndroidViewModel {
         return liveData;
     }
 
-    public void saveVisibility(GraphsVisibilityFilterModel model) {
+    public void saveVisibility(GraphsVisibilityModel model) {
         sharedPreferenceManager.saveGraphVisibility(GraphsVisibilityMapper.toString(model));
     }
 
-    public GraphsVisibilityFilterModel getGraphsVisibility() {
+    public GraphsVisibilityModel getGraphsVisibility() {
         return GraphsVisibilityMapper.toVisibilityModel(sharedPreferenceManager.getGraphVisibility());
     }
 

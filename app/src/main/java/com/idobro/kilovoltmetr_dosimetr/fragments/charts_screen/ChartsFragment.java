@@ -20,7 +20,7 @@ import com.idobro.kilovoltmetr_dosimetr.R;
 import com.idobro.kilovoltmetr_dosimetr.activities.MainActivity;
 import com.idobro.kilovoltmetr_dosimetr.base.BaseFragment;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
-import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityFilterModel;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityModel;
 import com.idobro.kilovoltmetr_dosimetr.utils.GraphManager;
 
 import java.util.ArrayList;
@@ -121,13 +121,13 @@ public class ChartsFragment extends BaseFragment {
     }
 
     private void setDataToCharts() {
-        GraphsVisibilityFilterModel filter = ((MainActivity) getActivity()).getViewModel().getGraphsVisibility();
+        GraphsVisibilityModel filter = ((MainActivity) getActivity()).getViewModel().getGraphsVisibility();
         //Front chart
         ArrayList<ILineDataSet> frontDataSets = new ArrayList<>();
         ArrayList<InfoItem> infoItems = new ArrayList<>();
 
         /* График 3-го канала (зеленый),код - #4caf50*/
-        if (filter.isFrontThirdChanel()) {
+        if (false) {
             ArrayList<Entry> frontThirdValue = new ArrayList<>();
 
             for (int i = 0; i < frontFirstChanelArray.length; i++) {
@@ -144,7 +144,7 @@ public class ChartsFragment extends BaseFragment {
         }
 
         /* График 2-го канала (красный),код - #cc3333*/
-        if (filter.isFrontSecondChanel()) {
+        if (false) {
             ArrayList<Entry> frontSecondValue = new ArrayList<>();
 
             for (int i = 0; i < frontFirstChanelArray.length; i++) {
@@ -161,7 +161,7 @@ public class ChartsFragment extends BaseFragment {
         }
 
         /* График 1-го канала (синий),код - #3F51B5*/
-        if (filter.isFrontFirstChanel()) {
+        if (false) {
             ArrayList<Entry> frontFirstValue = new ArrayList<>();
 
             for (int i = 0; i < frontFirstChanelArray.length; i++) {
@@ -179,7 +179,7 @@ public class ChartsFragment extends BaseFragment {
 
         /* График отношения 3-го канала к 1-ому (зеленого к синему),
          * резкльтирующий график бирюзовый, код - #468083*/
-        if (filter.isFrontRelationThirdToFirst()) {
+        if (false) {
             ArrayList<Entry> thirdToFirstValue = new ArrayList<>();
 
             float[] thirdToFirstArray = GraphManager.getRelationGraph(frontThirdChanelArray, frontFirstChanelArray);
@@ -199,7 +199,7 @@ public class ChartsFragment extends BaseFragment {
 
         /* График отношения 2-го канала к 1-ому (красного к синему),
          * резкльтирующий график коричневый, код - #8C7142*/
-        if (filter.isFrontRelationSecondToFirst()) {
+        if (false) {
             ArrayList<Entry> secondToFirstValue = new ArrayList<>();
 
             float[] secondToFirstArray = GraphManager.getRelationGraph(frontSecondChanelArray, frontFirstChanelArray);
@@ -219,7 +219,7 @@ public class ChartsFragment extends BaseFragment {
 
         /* График отношения 3-го канала к 2-ому (зеленого к красному),
          * резкльтирующий график сереневый, код - #864274*/
-        if (filter.isFrontRelationSecondToFirst()) {
+        if (false) {
             ArrayList<Entry> thirdToSecondValue = new ArrayList<>();
 
             float[] thirdToSecondArray = GraphManager.getRelationGraph(frontSecondChanelArray, frontFirstChanelArray);

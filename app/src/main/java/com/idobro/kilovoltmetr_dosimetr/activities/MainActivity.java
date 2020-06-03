@@ -26,10 +26,13 @@ import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
 import com.idobro.kilovoltmetr_dosimetr.fragments.charts_screen.ChartsFragment;
+import com.idobro.kilovoltmetr_dosimetr.fragments.filter.FilterDialog;
+import com.idobro.kilovoltmetr_dosimetr.fragments.filter.SubmitGraphVisibilityListener;
 import com.idobro.kilovoltmetr_dosimetr.fragments.graph_dialog.GetGraphDialog;
 import com.idobro.kilovoltmetr_dosimetr.models.BluetoothDevices;
 import com.idobro.kilovoltmetr_dosimetr.models.GraphsDates;
-import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainActivityViewModel;
+import com.idobro.kilovoltmetr_dosimetr.models.GraphsVisibilityModel;
+import com.idobro.kilovoltmetr_dosimetr.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraphSelectedListener {
+public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraphSelectedListener, SubmitGraphVisibilityListener {
     @BindView(R.id.statusTextView)
     TextView statusTextView;
 
@@ -54,7 +57,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     @BindView(R.id.ivFilter)
     ImageView ibFilter;
 
-    private MainActivityViewModel viewModel;
+    private MainViewModel viewModel;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private ArrayList<BluetoothDevice> listItems = new ArrayList<>();
     private MutableLiveData<Graph> graphLiveData;
@@ -65,7 +68,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(findViewById(R.id.toolbar));
-        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         graphLiveData = new MutableLiveData<>();
     }
 
@@ -76,7 +79,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         viewModel.getStatusLiveData().observe(this, new OnStatusChangeListener());
     }
 
-    public MainActivityViewModel getViewModel() {
+    public MainViewModel getViewModel() {
         return viewModel;
     }
 
@@ -146,9 +149,13 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         viewModel.enableNewMeasure();
     }
 
+    // FIXME: 03.06.2020 for test    
     @OnClick(R.id.ivFilter)
     void showFilter() {
-        Toast.makeText(this, "В разработке", Toast.LENGTH_LONG).show();
+        FilterDialog.start(this,
+                viewModel.getGraphsVisibility(),
+                this);
+        //Toast.makeText(this, "В разработке", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -171,9 +178,14 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         viewModel.getGraphById(id).observe(this, this::showGraph);
     }
 
-    class OnStatusChangeListener implements Observer<MainActivityViewModel.SocketStatus> {
+    @Override
+    public void onSubmit(GraphsVisibilityModel model) {
+        viewModel.saveVisibility(model);
+    }
+
+    class OnStatusChangeListener implements Observer<MainViewModel.SocketStatus> {
         @Override
-        public void onChanged(MainActivityViewModel.SocketStatus status) {
+        public void onChanged(MainViewModel.SocketStatus status) {
             switch (status) {
                 case DISCONNECT:
                     statusTextView.setText(R.string.disconnected);
