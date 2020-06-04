@@ -9,7 +9,7 @@ import com.idobro.kilovoltmetr_dosimetr.base.BaseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChartInfoAdapter extends BaseAdapter<ChartInfoViewHolder> {
+public class GraphsInfoAdapter extends BaseAdapter<GraphsInfoViewHolder> {
     private List<InfoItem> items = new ArrayList<>();
 
     void setItems(List<InfoItem> items) {
@@ -19,12 +19,12 @@ public class ChartInfoAdapter extends BaseAdapter<ChartInfoViewHolder> {
 
     @NonNull
     @Override
-    public ChartInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return ChartInfoViewHolder.create(parent);
+    public GraphsInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return GraphsInfoViewHolder.create(parent);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChartInfoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GraphsInfoViewHolder holder, int position) {
         holder.bind(items.get(position));
     }
 

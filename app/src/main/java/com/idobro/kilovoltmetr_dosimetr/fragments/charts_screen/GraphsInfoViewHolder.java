@@ -10,19 +10,19 @@ import com.idobro.kilovoltmetr_dosimetr.base.BaseViewHolder;
 
 import butterknife.BindView;
 
-public class ChartInfoViewHolder extends BaseViewHolder {
+public class GraphsInfoViewHolder extends BaseViewHolder {
     @BindView(R.id.vChartColor)
     View vChartColor;
 
     @BindView(R.id.tvInfo)
     TextView tvInfo;
 
-    private ChartInfoViewHolder(View itemView) {
+    private GraphsInfoViewHolder(View itemView) {
         super(itemView);
     }
 
-    static ChartInfoViewHolder create(ViewGroup parent) {
-        return new ChartInfoViewHolder(generateView(parent, R.layout.item_chart_info));
+    static GraphsInfoViewHolder create(ViewGroup parent) {
+        return new GraphsInfoViewHolder(generateView(parent, R.layout.item_chart_info));
     }
 
     public void bind(InfoItem item) {

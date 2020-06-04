@@ -25,7 +25,7 @@ import com.idobro.kilovoltmetr_dosimetr.custom_views.BluetoothStatusView.State;
 import com.idobro.kilovoltmetr_dosimetr.database.entities.Graph;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.MainFragmentImpl;
-import com.idobro.kilovoltmetr_dosimetr.fragments.charts_screen.ChartsFragment;
+import com.idobro.kilovoltmetr_dosimetr.fragments.charts_screen.GraphsFragment;
 import com.idobro.kilovoltmetr_dosimetr.fragments.filter.FilterDialog;
 import com.idobro.kilovoltmetr_dosimetr.fragments.filter.SubmitGraphVisibilityListener;
 import com.idobro.kilovoltmetr_dosimetr.fragments.graph_dialog.GetGraphDialog;
@@ -149,13 +149,11 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         viewModel.enableNewMeasure();
     }
 
-    // FIXME: 03.06.2020 for test    
     @OnClick(R.id.ivFilter)
     void showFilter() {
         FilterDialog.start(this,
                 viewModel.getGraphsVisibility(),
                 this);
-        //Toast.makeText(this, "В разработке", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -170,7 +168,7 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     }
 
     private void showGraph(Graph graph) {
-        addFragmentToContainer(ChartsFragment.start(graph));
+        addFragmentToContainer(GraphsFragment.start(graph));
     }
 
     @Override
@@ -181,6 +179,11 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
     @Override
     public void onSubmit(GraphsVisibilityModel model) {
         viewModel.saveVisibility(model);
+
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof GraphsFragment && fragment.isVisible())
+                ((GraphsFragment) fragment).redrawGraphs();
+        }
     }
 
     class OnStatusChangeListener implements Observer<MainViewModel.SocketStatus> {

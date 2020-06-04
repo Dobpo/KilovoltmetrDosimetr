@@ -20,6 +20,7 @@ public final class GraphsVisibilityMapper {
         if (TextUtils.isEmpty(json))
             return new GraphsVisibilityModel(createModel());
         else
+            //return new GraphsVisibilityModel(createModel());
             return gson.fromJson(json, GraphsVisibilityModel.class);
     }
 
@@ -29,9 +30,15 @@ public final class GraphsVisibilityMapper {
 
     private static List<GraphVisibility> createModel() {
         List<GraphVisibility> items = new ArrayList<>();
-        items.add(new GraphVisibility("title1", "#ff0000", true));
-        items.add(new GraphVisibility("title2", "#00ff00", false));
-        items.add(new GraphVisibility("title3", "#0000ff", true));
+
+        items.add(new GraphVisibility("Front first chanel", "#3F51B5", true));
+        items.add(new GraphVisibility("Front second chanel", "#cc3333", false));
+        items.add(new GraphVisibility("Front third chanel", "#4caf50", false));
+
+        items.add(new GraphVisibility("Front third to second", "#864274", false));
+        items.add(new GraphVisibility("Front third to first", "#468083", false));
+        items.add(new GraphVisibility("Front second to first", "#8C7142", false));
+
         return items;
     }
 }

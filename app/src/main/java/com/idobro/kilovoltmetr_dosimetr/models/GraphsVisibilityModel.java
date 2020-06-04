@@ -2,6 +2,13 @@ package com.idobro.kilovoltmetr_dosimetr.models;
 
 import java.util.List;
 
+import static com.idobro.kilovoltmetr_dosimetr.models.GraphLine.FRONT_FIRST_CHANEL;
+import static com.idobro.kilovoltmetr_dosimetr.models.GraphLine.FRONT_SECOND_CHANEL;
+import static com.idobro.kilovoltmetr_dosimetr.models.GraphLine.FRONT_SECOND_TO_FIRST;
+import static com.idobro.kilovoltmetr_dosimetr.models.GraphLine.FRONT_THIRD_CHANEL;
+import static com.idobro.kilovoltmetr_dosimetr.models.GraphLine.FRONT_THIRD_OT_FIRST;
+import static com.idobro.kilovoltmetr_dosimetr.models.GraphLine.FRONT_THIRD_TO_SECOND;
+
 public class GraphsVisibilityModel {
     private List<GraphVisibility> items;
 
@@ -15,6 +22,25 @@ public class GraphsVisibilityModel {
 
     public void setItems(List<GraphVisibility> items) {
         this.items = items;
+    }
+
+    public GraphVisibility getItem(@GraphLine String name) {
+        switch (name) {
+            case FRONT_FIRST_CHANEL:
+                return items.get(0);
+            case FRONT_SECOND_CHANEL:
+                return items.get(1);
+            case FRONT_THIRD_CHANEL:
+                return items.get(2);
+            case FRONT_THIRD_TO_SECOND:
+                return items.get(3);
+            case FRONT_THIRD_OT_FIRST:
+                return items.get(4);
+            case FRONT_SECOND_TO_FIRST:
+                return items.get(5);
+            default:
+                throw new IllegalArgumentException("Wrong line type");
+        }
     }
 
     public static class GraphVisibility {
