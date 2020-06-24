@@ -6,7 +6,7 @@ public final class GraphManager {
     /**
      * Отношение одного графика ко второму
      */
-    public static float[] getRelationGraph(float[] firstArray, float[] secondArray) {
+    public static float[] getRelationGraph(float[] firstArray, float[] secondArray, int conversionFactor) {
         if (firstArray.length != secondArray.length)
             throw new IllegalArgumentException("Different arrays size");
 
@@ -16,9 +16,9 @@ public final class GraphManager {
 
         for (int i = 0; i < firstArray.length; i++) {
             if (secondArray[i] == 0)
-                resultArray[i] = firstArray[i] / secondAverage;
+                resultArray[i] = (firstArray[i] / secondAverage) * conversionFactor;
             else
-                resultArray[i] = firstArray[i] / secondArray[i];
+                resultArray[i] = (firstArray[i] / secondArray[i]) * conversionFactor;
         }
 
         return resultArray;

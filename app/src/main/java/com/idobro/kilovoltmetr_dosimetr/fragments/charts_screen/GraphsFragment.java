@@ -190,7 +190,9 @@ public class GraphsFragment extends BaseFragment {
         if (filter.getItem(GraphLine.FRONT_THIRD_OT_FIRST).getChecked()) {
             ArrayList<Entry> thirdToFirstValue = new ArrayList<>();
 
-            float[] thirdToFirstArray = GraphManager.getRelationGraph(frontThirdChanelArray, frontFirstChanelArray);
+            // TODO: 24.06.2020 поменял местами отношения графиков!!! + умножить на xxx(добавил сюда)
+            //Что то напорол с графиками какой синий, какой зеленый
+            float[] thirdToFirstArray = GraphManager.getRelationGraph(frontFirstChanelArray, frontThirdChanelArray, 10);
 
             for (int i = 0; i < thirdToFirstArray.length; i++) {
                 thirdToFirstValue.add(new Entry(i, thirdToFirstArray[i]));
@@ -206,12 +208,12 @@ public class GraphsFragment extends BaseFragment {
                     + "%.3f", GraphManager.getStandardDeviation(thirdToFirstArray))));
         }
 
-        /* График отношения 2-го канала к 1-ому (красного к синему),
-         * резкльтирующий график коричневый, код - #8C7142*/
+        /* График отношения 1-го канала к 2-ому (красного к синему***********),
+         * резкльтирующий график коричневый, код - #8C7142*//*864274*/
         if (filter.getItem(GraphLine.FRONT_SECOND_TO_FIRST).getChecked()) {
             ArrayList<Entry> secondToFirstValue = new ArrayList<>();
-
-            float[] secondToFirstArray = GraphManager.getRelationGraph(frontSecondChanelArray, frontFirstChanelArray);
+            // TODO: 24.06.2020 поменял местами отношения графиков!!! + умножить на xxx(добавил сюда)
+            float[] secondToFirstArray = GraphManager.getRelationGraph(frontFirstChanelArray, frontSecondChanelArray, 203);
 
             for (int i = 0; i < secondToFirstArray.length; i++) {
                 secondToFirstValue.add(new Entry(i, secondToFirstArray[i]));
@@ -219,7 +221,9 @@ public class GraphsFragment extends BaseFragment {
 
             LineDataSet frontThirdLineDataSet = new LineDataSet(secondToFirstValue, "DataSet");
 
+            //TODO какаето херня с цветами графиков
             String color = filter.getItem(GraphLine.FRONT_SECOND_TO_FIRST).getColor();
+            //filter.getItem(GraphLine.FRONT_SECOND_TO_FIRST).getColor();
             customizeLineForChart(frontDataSets, frontThirdLineDataSet, color);
             infoItems.add(new InfoItem(color, String.format(getString(R.string.average_value)
                     + "%.3f", GraphManager.getAverage(secondToFirstArray))));
@@ -228,11 +232,12 @@ public class GraphsFragment extends BaseFragment {
         }
 
         /* График отношения 3-го канала к 2-ому (зеленого к красному),
-         * резкльтирующий график сереневый, код - #864274*/
+         * резкльтирующий график сереневый, код - #864274*//*8C7142*/
         if (filter.getItem(GraphLine.FRONT_THIRD_TO_SECOND).getChecked()) {
             ArrayList<Entry> thirdToSecondValue = new ArrayList<>();
 
-            float[] thirdToSecondArray = GraphManager.getRelationGraph(frontSecondChanelArray, frontFirstChanelArray);
+            // TODO: 24.06.2020 поменял местами отношения графиков!!! + умножить на xxx(добавил сюда)
+            float[] thirdToSecondArray = GraphManager.getRelationGraph(frontSecondChanelArray, frontThirdChanelArray, 1000);
 
             for (int i = 0; i < thirdToSecondArray.length; i++) {
                 thirdToSecondValue.add(new Entry(i, thirdToSecondArray[i]));

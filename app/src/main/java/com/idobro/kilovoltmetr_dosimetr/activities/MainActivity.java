@@ -70,6 +70,8 @@ public class MainActivity extends BaseActivity implements GetGraphDialog.OnGraph
         setSupportActionBar(findViewById(R.id.toolbar));
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         graphLiveData = new MutableLiveData<>();
+        //Remove saved graphs
+        //viewModel.removeAllGraphs();
     }
 
     @Override

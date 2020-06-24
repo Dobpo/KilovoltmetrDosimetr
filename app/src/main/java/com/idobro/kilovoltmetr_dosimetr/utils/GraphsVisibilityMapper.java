@@ -16,6 +16,8 @@ public final class GraphsVisibilityMapper {
     private GraphsVisibilityMapper() {
     }
 
+
+    //todo есть вопросы к цветам графиков
     public static GraphsVisibilityModel toVisibilityModel(String json) {
         if (TextUtils.isEmpty(json))
             return new GraphsVisibilityModel(createModel());
@@ -35,9 +37,9 @@ public final class GraphsVisibilityMapper {
         items.add(new GraphVisibility("Front second chanel", "#cc3333", false));
         items.add(new GraphVisibility("Front third chanel", "#4caf50", false));
 
-        items.add(new GraphVisibility("Front third to second", "#864274", false));
+        items.add(new GraphVisibility("Front third to second", "#8C7142", false));
         items.add(new GraphVisibility("Front third to first", "#468083", false));
-        items.add(new GraphVisibility("Front second to first", "#8C7142", false));
+        items.add(new GraphVisibility("Front second to first", "#864274", false));
 
         return items;
     }

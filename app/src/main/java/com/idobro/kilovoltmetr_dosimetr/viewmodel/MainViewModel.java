@@ -113,6 +113,10 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
+    public void removeAllGraphs() {
+        databaseManager.deleteAllChart();
+    }
+
     public LiveData<List<GraphsDates>> getGraphsDates() {
         MutableLiveData<List<GraphsDates>> liveData = new MutableLiveData<>();
         databaseManager.getGraphsDates(new ResponseCallback<List<GraphsDates>>() {
